@@ -1,7 +1,11 @@
 import React from 'react';
+import { useDispatch } from 'react-redux';
+
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+
+import { loadFile } from '../fileLoader/fileLoaderSlice';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -12,15 +16,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const handleOnChange = (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  // dispatch(createOrderGuideData(file))
-};
-
 export default function IconLabelButtons() {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
+  const handleOnChange = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    dispatch(loadFile(file));
+  };
 
   return (
     <div>
