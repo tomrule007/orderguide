@@ -8,10 +8,21 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
+const highlightedText = (highlight, text) => {
+  const parts = String(text).split(new RegExp(`(${highlight})`, 'gi'));
+  return (
+    <span>
+      {parts.map((part, i) =>
+        i % 2 === 1 ? <mark key={i}>{part}</mark> : <>{part}</>
+      )}
+    </span>
+  );
+};
+
 const columns = [
   { id: 'brand', label: 'Brand' },
-  { id: 'upc', label: 'UPC' },
-  { id: 'description', label: 'Description' },
+  { id: 'upc', label: 'UPC', format: highlightedText },
+  { id: 'description', label: 'Description', format: highlightedText },
   { id: 'retail', label: 'Retail' },
   { id: 'caseRetail', label: 'Case Retail' },
 ];
@@ -62,7 +73,11 @@ export default function OrderGuideTable() {
                   const value = row[column.id];
                   return (
                     <TableCell key={column.id} align={column.align}>
-                      {value}
+                      <>
+                        {column.format
+                          ? column.format(filterText, value)
+                          : value}
+                      </>
                     </TableCell>
                   );
                 })}
