@@ -10,7 +10,7 @@ export const orderGuideSlice = createSlice({
   },
   reducers: {
     setFilterText: (state, action) => {
-      state.filterText = String(action.payload).toLowercase();
+      state.filterText = String(action.payload).toLowerCase();
     },
     setData: (state, action) => {
       state.data = action.payload;
