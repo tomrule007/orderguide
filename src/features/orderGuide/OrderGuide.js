@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useMemo, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -8,12 +8,18 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
+import { getOrderGuideData } from '../orderGuide/orderGuideSlice';
+
 const highlightedText = (highlight, text) => {
   const parts = String(text).split(new RegExp(`(${highlight})`, 'gi'));
   return (
     <span>
       {parts.map((part, i) =>
-        i % 2 === 1 ? <mark key={i}>{part}</mark> : <>{part}</>
+        i % 2 === 1 ? (
+          <mark key={i}>{part}</mark>
+        ) : (
+          <React.Fragment key={i}>{part}</React.Fragment>
+        )
       )}
     </span>
   );
@@ -42,6 +48,10 @@ const rowIncludes = (filterText) => (row) => {
 };
 
 export default function OrderGuideTable() {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getOrderGuideData());
+  }, []);
   const classes = useStyles();
   const data = useSelector((state) => state.orderGuide.data);
   const filterText = useSelector((state) => state.orderGuide.filterText);
