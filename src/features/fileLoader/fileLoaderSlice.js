@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import XLSX from 'xlsx';
 
-import { setData } from '../orderGuide/orderGuideSlice';
+import { getOrderGuideData } from '../orderGuide/orderGuideSlice';
 
 export const fileLoaderSlice = createSlice({
   name: 'fileLoader',
@@ -38,6 +38,11 @@ const createData = (rows) =>
     return { brand, upc, description, retail, caseRetail };
   });
 
+const removeDuplicates = (data, key) => {
+  let lookup = new Set();
+  return data.filter((obj) => !lookup.has(obj[key]) && lookup.add(obj[key]));
+};
+
 export const loadFile = (file) => async (dispatch) => {
   dispatch(loading());
   try {
@@ -50,13 +55,12 @@ export const loadFile = (file) => async (dispatch) => {
     /* Convert array of arrays */
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
     const data = createData(rows.slice(1, -1)); //Remove header row and total row
+    const deduplicateData = removeDuplicates(data, 'upc'); // TODO: add notification to display duplicate rows
 
-    /* set/get localStorage to ensure it stores properly without any errors */
-    localStorage.setItem('data', JSON.stringify(data));
-    const storedData = JSON.parse(localStorage.getItem('data'));
+    localStorage.setItem('data', JSON.stringify(deduplicateData));
 
     dispatch(success(Date.now()));
-    dispatch(setData(storedData));
+    dispatch(getOrderGuideData());
   } catch (error) {
     dispatch(failure(error));
   }

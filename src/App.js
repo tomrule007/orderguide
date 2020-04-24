@@ -7,7 +7,7 @@ function App() {
   return (
     <>
       <AppBar />
-      <AppDrawer />
+      {/* <AppDrawer /> */}
       <FileLoader />
       <OrderGuide />
     </>
