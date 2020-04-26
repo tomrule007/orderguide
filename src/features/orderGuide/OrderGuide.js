@@ -38,6 +38,7 @@ const columns = [
 const useStyles = makeStyles({
   root: {
     width: '100%',
+    height: '80vh',
   },
 });
 
