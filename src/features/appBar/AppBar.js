@@ -64,6 +64,7 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
+  offset: theme.mixins.toolbar,
 }));
 
 export default function MyAppBar() {
@@ -71,8 +72,8 @@ export default function MyAppBar() {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
-      <AppBar position="sticky">
+    <>
+      <AppBar position="fixed">
         <Toolbar>
           <IconButton
             edge="start"
@@ -103,6 +104,7 @@ export default function MyAppBar() {
           </div>
         </Toolbar>
       </AppBar>
-    </div>
+      <div class={classes.offset} />
+    </>
   );
 }
