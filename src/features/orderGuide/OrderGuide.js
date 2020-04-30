@@ -1,7 +1,6 @@
 import React, { useMemo, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -15,7 +14,7 @@ import { getOrderGuideData } from '../orderGuide/orderGuideSlice';
 const highlightedText = (highlight, text) => {
   const parts = String(text).split(new RegExp(`(${highlight})`, 'gi'));
   return (
-    <span>
+    <>
       {parts.map((part, i) =>
         i % 2 === 1 ? (
           <mark key={i}>{part}</mark>
@@ -23,7 +22,7 @@ const highlightedText = (highlight, text) => {
           <React.Fragment key={i}>{part}</React.Fragment>
         )
       )}
-    </span>
+    </>
   );
 };
 
@@ -36,8 +35,7 @@ const columns = [
 ];
 
 const useStyles = makeStyles({
-  root: {
-    width: '100%',
+  tableContainer: {
     height: '80vh',
   },
 });
@@ -75,18 +73,12 @@ export default function OrderGuideTable() {
   );
   return (
     <>
-      <TableContainer className={classes.root}>
+      <TableContainer className={classes.tableContainer}>
         <Table stickyHeader size="small" aria-label="sticky table">
           <TableHead>
             <TableRow>
               {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
+                <TableCell key={column.id}>{column.label}</TableCell>
               ))}
             </TableRow>
           </TableHead>
@@ -95,16 +87,14 @@ export default function OrderGuideTable() {
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.upc}>
+                  <TableRow hover tabIndex={-1} key={row.upc}>
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
-                        <TableCell key={column.id} align={column.align}>
-                          <>
-                            {column.format
-                              ? column.format(filterText, value)
-                              : value}
-                          </>
+                        <TableCell key={column.id}>
+                          {column.format
+                            ? column.format(filterText, value)
+                            : value}
                         </TableCell>
                       );
                     })}
