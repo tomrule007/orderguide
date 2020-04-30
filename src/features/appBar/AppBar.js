@@ -10,6 +10,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 
 import { setFilterText } from '../orderGuide/orderGuideSlice';
+import { toggleDrawer } from '../appDrawer/appDrawerSlice';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,6 +81,7 @@ export default function MyAppBar() {
             className={classes.menuButton}
             color="inherit"
             aria-label="open drawer"
+            onClick={() => dispatch(toggleDrawer(true))}
           >
             <MenuIcon />
           </IconButton>
