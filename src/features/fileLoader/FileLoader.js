@@ -45,7 +45,7 @@ export default function IconLabelButtons() {
           startIcon={<CloudUploadIcon />}
           component="span"
         >
-          Load
+          Load Order Guide
         </Button>
       </label>
     </div>
