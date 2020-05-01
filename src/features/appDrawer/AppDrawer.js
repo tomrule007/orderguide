@@ -29,6 +29,8 @@ export default function AppDrawer() {
       open={isOpen}
       onClose={handleToggleDrawer(false)}
       onOpen={handleToggleDrawer(true)}
+      onClick={handleToggleDrawer(false)}
+      onKeyDown={handleToggleDrawer(false)}
     >
       <List>
         <ListItem>
