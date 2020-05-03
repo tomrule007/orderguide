@@ -6,7 +6,7 @@ import AppBar from './features/appBar/AppBar';
 import AppDrawer from './features/appDrawer/AppDrawer';
 import OrderGuide from './features/orderGuide/OrderGuide';
 import FileLoader from './features/fileLoader/FileLoader';
-
+import BarcodeScanner from './features/barcodeScanner/BarcodeScanner';
 import { getOrderGuideData } from './features/orderGuide/orderGuideSlice';
 
 const useStyles = makeStyles({
@@ -34,6 +34,7 @@ function App() {
     <div className={classes.app}>
       <AppDrawer />
       <AppBar />
+      <BarcodeScanner />
       {isLoading ? (
         <div className={classes.center}>
           <CircularProgress size="5rem" />
