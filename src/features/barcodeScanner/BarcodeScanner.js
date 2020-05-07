@@ -1,17 +1,16 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListItem from '@material-ui/core/ListItem';
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
+import Paper from '@material-ui/core/Paper';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
+
+import { BrowserQRCodeReader } from '@zxing/library';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -28,8 +27,19 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function BarcodeScanner() {
+  const videoEl = useRef(null);
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
+
+  function handleStart() {
+    console.log('ref', videoEl.current);
+    const codeReader = new BrowserQRCodeReader();
+    codeReader
+      .decodeOnceFromVideoDevice(undefined, 'video')
+      .then((result) => console.log(result.text))
+      .catch((err) => console.error(err));
+    console.log('HOW DO I GET THIS?');
+  }
 
   function handleClickOpen() {
     setOpen(true);
@@ -63,23 +73,21 @@ export default function BarcodeScanner() {
             <Typography variant="h6" className={classes.title}>
               Sound
             </Typography>
-            <Button color="inherit" onClick={handleClose}>
-              save
+            <Button color="inherit" onClick={handleStart}>
+              Start
             </Button>
           </Toolbar>
         </AppBar>
-        <List>
-          <ListItem button>
-            <ListItemText primary="Phone ringtone" secondary="Titania" />
-          </ListItem>
-          <Divider />
-          <ListItem button>
-            <ListItemText
-              primary="Default notification ringtone"
-              secondary="Tethys"
-            />
-          </ListItem>
-        </List>
+        <Paper>
+          <div>test</div>
+          <video
+            ref={videoEl}
+            id="video"
+            width="300"
+            height="200"
+            style={{ border: '1px solid gray' }}
+          ></video>
+        </Paper>
       </Dialog>
     </div>
   );
