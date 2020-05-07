@@ -8,6 +8,7 @@ import OrderGuide from './features/orderGuide/OrderGuide';
 import FileLoader from './features/fileLoader/FileLoader';
 
 import { getOrderGuideData } from './features/orderGuide/orderGuideSlice';
+import InstructionalModal from './features/instructionModal/InstructionModal';
 
 const useStyles = makeStyles({
   app: {
@@ -34,6 +35,7 @@ function App() {
     <div className={classes.app}>
       <AppDrawer />
       <AppBar />
+      <InstructionalModal />
       {isLoading ? (
         <div className={classes.center}>
           <CircularProgress size="5rem" />
