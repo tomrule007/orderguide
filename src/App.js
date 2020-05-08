@@ -9,6 +9,7 @@ import FileLoader from './features/fileLoader/FileLoader';
 
 import { getOrderGuideData } from './features/orderGuide/orderGuideSlice';
 import InstructionalModal from './features/instructionModal/InstructionModal';
+import MockDataLink from './features/mockDataLink/MockDataLink';
 
 const useStyles = makeStyles({
   app: {
@@ -46,7 +47,10 @@ function App() {
         </div>
       ) : (
         <div className={classes.center}>
-          <FileLoader />
+          <div>
+            <FileLoader />
+            <MockDataLink />
+          </div>
         </div>
       )}
     </div>
