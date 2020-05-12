@@ -45,8 +45,11 @@ const removeDuplicates = (data, key) => {
 
 export const loadFile = (file) => async (dispatch) => {
   dispatch(loading());
+  const isBase64 = typeof file === 'string';
   try {
-    const wb = XLSX.read(await file.arrayBuffer(), { type: 'array' });
+    const wb = XLSX.read(isBase64 ? file : await file.arrayBuffer(), {
+      type: isBase64 ? 'base64' : 'array',
+    });
 
     /* Get first worksheet */
     const wsname = wb.SheetNames[0];

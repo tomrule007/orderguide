@@ -8,7 +8,10 @@ import OrderGuide from './features/orderGuide/OrderGuide';
 import FileLoader from './features/fileLoader/FileLoader';
 import BarcodeScanner from './features/barcodeScanner/BarcodeScanner';
 import { getOrderGuideData } from './features/orderGuide/orderGuideSlice';
+
 import ScannerVideo from './features/scanner/ScannerVideo';
+import InstructionalModal from './features/instructionModal/InstructionModal';
+import MockDataLink from './features/mockDataLink/MockDataLink';
 
 const useStyles = makeStyles({
   app: {
@@ -36,7 +39,7 @@ function App() {
       <AppDrawer />
       <AppBar />
       <BarcodeScanner />
-
+      <InstructionalModal />
       {isLoading ? (
         <div className={classes.center}>
           <CircularProgress size="5rem" />
@@ -47,7 +50,10 @@ function App() {
         </div>
       ) : (
         <div className={classes.center}>
-          <FileLoader />
+          <div>
+            <FileLoader />
+            <MockDataLink />
+          </div>
         </div>
       )}
     </div>
