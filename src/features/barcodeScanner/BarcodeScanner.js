@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 
-import { BrowserQRCodeReader } from '@zxing/library';
+import ScannerVideo from '../scanner/ScannerVideo';
 
 const useStyles = makeStyles((theme) => ({
   appBar: {
@@ -27,19 +27,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function BarcodeScanner() {
-  const videoEl = useRef(null);
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
-
-  function handleStart() {
-    console.log('ref', videoEl.current);
-    const codeReader = new BrowserQRCodeReader();
-    codeReader
-      .decodeOnceFromVideoDevice(undefined, 'video')
-      .then((result) => console.log(result.text))
-      .catch((err) => console.error(err));
-    console.log('HOW DO I GET THIS?');
-  }
+  const [barcode, setBarcode] = React.useState(null);
 
   function handleClickOpen() {
     setOpen(true);
@@ -48,6 +38,10 @@ export default function BarcodeScanner() {
   function handleClose() {
     setOpen(false);
   }
+
+  const onDetected = (results) => {
+    setBarcode(results);
+  };
 
   return (
     <div>
@@ -73,20 +67,15 @@ export default function BarcodeScanner() {
             <Typography variant="h6" className={classes.title}>
               Sound
             </Typography>
-            <Button color="inherit" onClick={handleStart}>
-              Start
-            </Button>
+            <Button color="inherit">Start</Button>
           </Toolbar>
         </AppBar>
         <Paper>
-          <div>test</div>
-          <video
-            ref={videoEl}
-            id="video"
-            width="300"
-            height="200"
-            style={{ border: '1px solid gray' }}
-          ></video>
+          {barcode ? (
+            <div>{barcode}</div>
+          ) : (
+            <ScannerVideo onDetected={onDetected} />
+          )}
         </Paper>
       </Dialog>
     </div>
