@@ -36,7 +36,9 @@ function App() {
       <AppDrawer />
       <AppBar />
       {/* <BarcodeScanner /> */}
-      <ScannerVideo />
+      <ScannerVideo
+        onDetected={(results) => console.log('the results', results)}
+      />
       {isLoading ? (
         <div className={classes.center}>
           <CircularProgress size="5rem" />

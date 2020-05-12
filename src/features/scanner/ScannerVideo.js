@@ -2,8 +2,6 @@ import React, { useState, useRef, useCallback, useLayoutEffect } from 'react';
 
 import Quagga from '@ericblade/quagga2';
 
-const onDetected = (results) => console.log('results', results);
-
 function getMedian(arr) {
   arr.sort((a, b) => a - b);
   const half = Math.floor(arr.length / 2);
@@ -21,9 +19,8 @@ function getMedianOfCodeErrors(decodedCodes) {
   return medianOfErrors;
 }
 
-const ScannerVideo = () => {
+const ScannerVideo = ({ onDetected }) => {
   const [scanning, setScanning] = useState(false);
-  const [results, setResults] = useState([]);
   const scannerRef = useRef(null);
   const errorCheck = useCallback(
     (result) => {
