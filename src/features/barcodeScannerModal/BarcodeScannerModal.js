@@ -10,7 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 
-import ScannerVideo from '../scanner/ScannerVideo';
+import BarcodeScanner from '../barcodeScanner/BarcodeScanner';
 import './BarcodeScannerModal.css';
 
 const useStyles = makeStyles((theme) => ({
@@ -24,7 +24,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function BarcodeScanner() {
+export default function BarcodeScannerModal() {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   const [scannerEnabled, setScannerEnabled] = useState(false);
@@ -70,7 +70,7 @@ export default function BarcodeScanner() {
             </IconButton>
           </Toolbar>
         </AppBar>
-        <ScannerVideo onDetected={onDetected} enabled={scannerEnabled} />
+        <BarcodeScanner onDetected={onDetected} enabled={scannerEnabled} />
       </Dialog>
     </div>
   );

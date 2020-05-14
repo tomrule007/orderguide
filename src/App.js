@@ -6,10 +6,9 @@ import AppBar from './features/appBar/AppBar';
 import AppDrawer from './features/appDrawer/AppDrawer';
 import OrderGuide from './features/orderGuide/OrderGuide';
 import FileLoader from './features/fileLoader/FileLoader';
-import BarcodeScanner from './features/barcodeScanner/BarcodeScanner';
+import BarcodeScannerModal from './features/barcodeScannerModal/BarcodeScannerModal';
 import { getOrderGuideData } from './features/orderGuide/orderGuideSlice';
 
-import ScannerVideo from './features/scanner/ScannerVideo';
 import InstructionalModal from './features/instructionModal/InstructionModal';
 import MockDataLink from './features/mockDataLink/MockDataLink';
 
@@ -38,7 +37,7 @@ function App() {
     <div className={classes.app}>
       <AppDrawer />
       <AppBar />
-      <BarcodeScanner />
+      <BarcodeScannerModal />
       <InstructionalModal />
       {isLoading ? (
         <div className={classes.center}>
