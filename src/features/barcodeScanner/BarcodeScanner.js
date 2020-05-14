@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -11,11 +11,9 @@ import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 
 import ScannerVideo from '../scanner/ScannerVideo';
+import './BarcodeScanner.css';
 
 const useStyles = makeStyles((theme) => ({
-  appBar: {
-    position: 'relative',
-  },
   title: {
     marginLeft: theme.spacing(2),
     flex: 1,
@@ -28,19 +26,25 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function BarcodeScanner() {
   const classes = useStyles();
-  const [open, setOpen] = React.useState(false);
-  const [barcode, setBarcode] = React.useState(null);
+  const [open, setOpen] = useState(false);
+  const [scannerEnabled, setScannerEnabled] = useState(false);
 
   function handleClickOpen() {
+    console.log('OPEN AND SET SCANNER TO ENABLED MODE');
     setOpen(true);
+    setScannerEnabled(true);
   }
 
   function handleClose() {
+    console.log('CLOSE AND SET SCANNER TO DISABLED MODE');
     setOpen(false);
+    setScannerEnabled(false);
   }
 
   const onDetected = (results) => {
-    setBarcode(results);
+    console.log('results', results);
+    setScannerEnabled(false);
+    setOpen(false);
   };
 
   return (
@@ -54,7 +58,7 @@ export default function BarcodeScanner() {
         onClose={handleClose}
         TransitionComponent={Transition}
       >
-        <AppBar className={classes.appBar}>
+        <AppBar color="transparent" elevation={0}>
           <Toolbar>
             <IconButton
               edge="start"
@@ -64,19 +68,9 @@ export default function BarcodeScanner() {
             >
               <CloseIcon />
             </IconButton>
-            <Typography variant="h6" className={classes.title}>
-              Sound
-            </Typography>
-            <Button color="inherit">Start</Button>
           </Toolbar>
         </AppBar>
-        <Paper>
-          {barcode ? (
-            <div>{barcode}</div>
-          ) : (
-            <ScannerVideo onDetected={onDetected} />
-          )}
-        </Paper>
+        <ScannerVideo onDetected={onDetected} enabled={scannerEnabled} />
       </Dialog>
     </div>
   );

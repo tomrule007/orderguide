@@ -19,8 +19,8 @@ function getMedianOfCodeErrors(decodedCodes) {
   return medianOfErrors;
 }
 
-const ScannerVideo = ({ onDetected }) => {
-  const [scanning, setScanning] = useState(false);
+const ScannerVideo = ({ onDetected, enabled }) => {
+  const [scannerInitialized, setScannerInitialized] = useState(false);
   const scannerRef = useRef(null);
   const errorCheck = useCallback(
     (result) => {
@@ -70,6 +70,16 @@ const ScannerVideo = ({ onDetected }) => {
     }
   };
 
+  if (scannerInitialized) {
+    if (enabled) {
+      console.log('STARTING SCANNNNNNEEEERRRRRR');
+      Quagga.start();
+    } else {
+      console.log('Stopping SCANNNNEEEEERRRRRs');
+      Quagga.stop();
+    }
+  }
+
   useLayoutEffect(() => {
     Quagga.init(
       {
@@ -96,13 +106,12 @@ const ScannerVideo = ({ onDetected }) => {
         if (err) {
           return console.log('Error starting Quagga:', err);
         }
-        if (scannerRef && scannerRef.current) {
-          console.log('Starting the scanning');
-          Quagga.start();
-        }
+        console.log('SCANNNEEEERRRRRR INIITTIAAALLLIZZEED');
+        setScannerInitialized(true);
       }
     );
     Quagga.onDetected(errorCheck);
+
     return () => {
       Quagga.offDetected(errorCheck);
       Quagga.offProcessed(handleProcessed);
@@ -110,29 +119,19 @@ const ScannerVideo = ({ onDetected }) => {
     };
   }, []);
   return (
-    <div>
-      <button onClick={() => setScanning(!scanning)}>
-        {scanning ? 'Stop' : 'Start'}
-      </button>
-      <div
-        ref={scannerRef}
-        style={{ position: 'relative', border: '3px solid red' }}
-      >
-        {/* <video style={{ width: window.innerWidth, height: 480, border: '3px solid orange' }}/> */}
-        <canvas
-          className="drawingBuffer"
-          style={{
-            position: 'absolute',
-            top: '0px',
-            // left: '0px',
-            // height: '100%',
-            // width: '100%',
-            border: '3px solid green',
-          }}
-          width="640"
-          height="480"
-        />
-      </div>
+    <div ref={scannerRef} style={{ position: 'relative' }}>
+      <canvas
+        className="drawingBuffer"
+        style={{
+          position: 'absolute',
+          top: '0px',
+          left: '0px',
+          height: '100%',
+          width: '100%',
+        }}
+        width="640"
+        height="480"
+      />
     </div>
   );
 };
