@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
-import Paper from '@material-ui/core/Paper';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 
+import { setFilterText } from '../appBar/appBarSlice';
+import {
+  setOpen,
+  setEnableScanner,
+  selectOpen,
+  selectEnableScanner,
+} from './barcodeScannerModalSlice';
 import BarcodeScanner from '../barcodeScanner/BarcodeScanner';
 import './BarcodeScannerModal.css';
 
@@ -26,25 +32,29 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 export default function BarcodeScannerModal() {
   const classes = useStyles();
-  const [open, setOpen] = useState(false);
-  const [scannerEnabled, setScannerEnabled] = useState(false);
+
+  const open = useSelector(selectOpen);
+  console.log('open = ', open);
+  const enableScanner = useSelector(selectEnableScanner);
+
+  const dispatch = useDispatch();
 
   function handleClickOpen() {
     console.log('OPEN AND SET SCANNER TO ENABLED MODE');
-    setOpen(true);
-    setScannerEnabled(true);
+    dispatch(setEnableScanner(true));
+    dispatch(setOpen(true));
   }
 
   function handleClose() {
     console.log('CLOSE AND SET SCANNER TO DISABLED MODE');
-    setOpen(false);
-    setScannerEnabled(false);
+    dispatch(setEnableScanner(false));
+    dispatch(setOpen(false));
   }
 
   const onDetected = (results) => {
     console.log('results', results);
-    setScannerEnabled(false);
-    setOpen(false);
+    dispatch(setFilterText(results));
+    handleClose();
   };
 
   return (
@@ -70,7 +80,7 @@ export default function BarcodeScannerModal() {
             </IconButton>
           </Toolbar>
         </AppBar>
-        <BarcodeScanner onDetected={onDetected} enabled={scannerEnabled} />
+        <BarcodeScanner onDetected={onDetected} enabled={enableScanner} />
       </Dialog>
     </div>
   );

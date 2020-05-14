@@ -8,6 +8,7 @@ import OrderGuide from './features/orderGuide/OrderGuide';
 import FileLoader from './features/fileLoader/FileLoader';
 import BarcodeScannerModal from './features/barcodeScannerModal/BarcodeScannerModal';
 import { getOrderGuideData } from './features/orderGuide/orderGuideSlice';
+import { selectFilterText } from './features/appBar/appBarSlice';
 
 import InstructionalModal from './features/instructionModal/InstructionModal';
 import MockDataLink from './features/mockDataLink/MockDataLink';
@@ -29,7 +30,8 @@ const useStyles = makeStyles({
 function App() {
   const dispatch = useDispatch();
   useEffect(() => dispatch(getOrderGuideData()), []);
-  const { data, filterText } = useSelector((state) => state.orderGuide);
+  const { data } = useSelector((state) => state.orderGuide);
+  const filterText = useSelector(selectFilterText);
   const isLoading = useSelector((state) => state.fileLoader.isLoading);
 
   const classes = useStyles();

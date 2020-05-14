@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -9,8 +9,8 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 
-import { setFilterText } from '../orderGuide/orderGuideSlice';
 import { toggleDrawer } from '../appDrawer/appDrawerSlice';
+import { setFilterText, selectFilterText } from './appBarSlice';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -70,6 +70,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function MyAppBar() {
   const dispatch = useDispatch();
+  const filterText = useSelector(selectFilterText);
   const classes = useStyles();
 
   return (
@@ -94,6 +95,7 @@ export default function MyAppBar() {
             </div>
             <InputBase
               placeholder="Search…"
+              value={filterText}
               onChange={(event) => {
                 dispatch(setFilterText(event.target.value));
               }}
