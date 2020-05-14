@@ -11,7 +11,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Slide from '@material-ui/core/Slide';
 
 import ScannerVideo from '../scanner/ScannerVideo';
-import './BarcodeScanner.css';
+import './BarcodeScannerModal.css';
 
 const useStyles = makeStyles((theme) => ({
   title: {
