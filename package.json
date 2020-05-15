@@ -6,6 +6,8 @@
     "@ericblade/quagga2": "^1.0.3",
     "@material-ui/core": "^4.9.11",
     "@material-ui/icons": "^4.9.1",
+    "@mdi/js": "^5.2.45",
+    "@mdi/react": "^1.4.0",
     "@reduxjs/toolkit": "^1.1.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
