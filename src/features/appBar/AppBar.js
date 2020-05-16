@@ -25,6 +25,15 @@ const useStyles = makeStyles((theme) => ({
   menuButton: {
     marginRight: theme.spacing(2),
   },
+  barcodeButton: {
+    height: '100%',
+    position: 'absolute',
+    top: '0px',
+    right: '0px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   title: {
     flexGrow: 1,
     display: 'none',
@@ -111,17 +120,19 @@ export default function MyAppBar() {
               }}
               inputProps={{ 'aria-label': 'search' }}
             />
-            <IconButton
-              edge="start"
-              color="inherit"
-              aria-label="open barcode scanner"
-              onClick={() => {
-                dispatch(setEnableScanner(true));
-                dispatch(setOpen(true));
-              }}
-            >
-              <Icon path={mdiBarcodeScan} title="barcode scan" size={1} />
-            </IconButton>
+            <div className={classes.barcodeButton}>
+              <IconButton
+                edge="start"
+                color="inherit"
+                aria-label="open barcode scanner"
+                onClick={() => {
+                  dispatch(setEnableScanner(true));
+                  dispatch(setOpen(true));
+                }}
+              >
+                <Icon path={mdiBarcodeScan} title="barcode scan" size={1} />
+              </IconButton>
+            </div>
           </div>
         </Toolbar>
       </AppBar>
