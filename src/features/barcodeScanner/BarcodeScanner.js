@@ -86,8 +86,8 @@ const ScannerVideo = ({ onDetected, enabled }) => {
         inputStream: {
           type: 'LiveStream',
           constraints: {
-            width: 640,
-            height: 480,
+            width: 1280,
+            height: 720,
             facingMode: 'environment',
           },
           target: scannerRef.current,
@@ -97,7 +97,7 @@ const ScannerVideo = ({ onDetected, enabled }) => {
           halfSample: true,
         },
         numOfWorkers: navigator.hardwareConcurrency || 0,
-        readers: ['ean_reader'],
+        readers: ['ean_reader', 'upc_reader'],
         locate: true,
       },
       (err) => {
