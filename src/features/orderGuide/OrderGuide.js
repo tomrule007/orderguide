@@ -32,8 +32,12 @@ const columns = [
 ];
 
 const useStyles = makeStyles({
-  tableContainer: {
-    height: '80vh',
+  tableBody: {
+    flex: '1 1 auto',
+    overflow: 'auto',
+  },
+  tableFooter: {
+    flex: '0 0 auto',
   },
 });
 
@@ -65,7 +69,7 @@ export default function OrderGuideTable({ data, filterText }) {
   );
   return (
     <>
-      <TableContainer className={classes.tableContainer}>
+      <TableContainer className={classes.tableBody}>
         <Table stickyHeader size="small" aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -97,6 +101,7 @@ export default function OrderGuideTable({ data, filterText }) {
         </Table>
       </TableContainer>
       <TablePagination
+        className={classes.tableFooter}
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
         count={filteredData.length}

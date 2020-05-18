@@ -25,6 +25,12 @@ const useStyles = makeStyles({
     justifyContent: 'center',
     flex: '1 1 auto',
   },
+  body: {
+    flex: '1 1 auto',
+    overflow: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+  },
 });
 
 function App() {
@@ -46,7 +52,7 @@ function App() {
           <CircularProgress size="5rem" />
         </div>
       ) : data.length ? (
-        <div>
+        <div className={classes.body}>
           <OrderGuide data={data} filterText={filterText} />
         </div>
       ) : (
