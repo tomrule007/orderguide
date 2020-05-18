@@ -64,7 +64,8 @@ export default function OrderGuideTable({ data, filterText }) {
   const classes = useStyles();
 
   const filteredData = useMemo(
-    () => (filterText ? data.filter(rowIncludes(filterText)) : data),
+    () =>
+      filterText ? data.filter(rowIncludes(filterText.toLowerCase())) : data,
     [data, filterText]
   );
   return (
