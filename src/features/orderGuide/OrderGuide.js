@@ -83,6 +83,23 @@ export default function OrderGuideTable({ data, filterText }) {
     [data, filterText]
   );
 
+  // TODO: Lift this date creation state to redux
+  // Date Utilities
+  function addDays(date, days) {
+    const copy = new Date(Number(date));
+    copy.setDate(date.getDate() + days);
+    return copy;
+  }
+  const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const today = new Date();
+
+  // Get Date & Day of week for previous 7 days, ending with yesterday
+  const days = [-7, -6, -5, -4, -3, -2, -1].map((daysAgo) => {
+    const date = addDays(today, daysAgo);
+    const dayOfWeek = WEEKDAYS[date.getDay()];
+    return { date, dayOfWeek };
+  });
+  console.log(days);
   const Row = (row) => {
     const [open, setOpen] = React.useState(false);
     const classes = useStyles();
@@ -120,24 +137,16 @@ export default function OrderGuideTable({ data, filterText }) {
                 <Table size="small" aria-label="purchases">
                   <TableHead>
                     <TableRow>
-                      <TableCell>Wed</TableCell>
-                      <TableCell>Thu</TableCell>
-                      <TableCell>Fri</TableCell>
-                      <TableCell>Sat</TableCell>
-                      <TableCell>Sun</TableCell>
-                      <TableCell>Mon</TableCell>
-                      <TableCell>Tue</TableCell>
+                      {days.map((day) => (
+                        <TableCell>{day.dayOfWeek}</TableCell>
+                      ))}
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     <TableRow>
-                      <TableCell>{'1'}</TableCell>
-                      <TableCell>{'1'}</TableCell>
-                      <TableCell>{'2'}</TableCell>
-                      <TableCell>{'2'}</TableCell>
-                      <TableCell>{'1'}</TableCell>
-                      <TableCell></TableCell>
-                      <TableCell></TableCell>
+                      {days.map((day) => (
+                        <TableCell>{day.date.toLocaleString()}</TableCell>
+                      ))}
                     </TableRow>
                   </TableBody>
                 </Table>
