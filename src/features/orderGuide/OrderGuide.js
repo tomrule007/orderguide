@@ -7,6 +7,11 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import Box from '@material-ui/core/Box';
+import Collapse from '@material-ui/core/Collapse';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import IconButton from '@material-ui/core/IconButton';
 
 const highlightedText = (highlight, text) => {
   const parts = String(text).split(new RegExp(`(${highlight})`, 'gi'));
@@ -39,6 +44,11 @@ const useStyles = makeStyles({
   tableFooter: {
     flex: '0 0 auto',
   },
+  noBottomBorder: {
+    '& > *': {
+      borderBottom: 'unset',
+    },
+  },
 });
 
 const rowIncludes = (filterText) => (row) => {
@@ -46,7 +56,11 @@ const rowIncludes = (filterText) => (row) => {
 
   return columnsToSearch
     .map((column) => row[column])
-    .some((value) => String(value).toLowerCase().includes(filterText));
+    .some((value) =>
+      String(value)
+        .toLowerCase()
+        .includes(filterText)
+    );
 };
 
 export default function OrderGuideTable({ data, filterText }) {
@@ -68,12 +82,80 @@ export default function OrderGuideTable({ data, filterText }) {
       filterText ? data.filter(rowIncludes(filterText.toLowerCase())) : data,
     [data, filterText]
   );
+
+  const Row = (row) => {
+    const [open, setOpen] = React.useState(false);
+    const classes = useStyles();
+
+    return (
+      <>
+        <TableRow
+          hover
+          tabIndex={-1}
+          key={row.upc}
+          className={classes.noBottomBorder}
+        >
+          <TableCell>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+          {columns.map((column) => {
+            const value = row[column.id];
+            return (
+              <TableCell key={column.id}>
+                {column.format ? column.format(filterText, value) : value}
+              </TableCell>
+            );
+          })}
+        </TableRow>
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box margin={1}>
+                <Table size="small" aria-label="purchases">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Wed</TableCell>
+                      <TableCell>Thu</TableCell>
+                      <TableCell>Fri</TableCell>
+                      <TableCell>Sat</TableCell>
+                      <TableCell>Sun</TableCell>
+                      <TableCell>Mon</TableCell>
+                      <TableCell>Tue</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell>{'1'}</TableCell>
+                      <TableCell>{'1'}</TableCell>
+                      <TableCell>{'2'}</TableCell>
+                      <TableCell>{'2'}</TableCell>
+                      <TableCell>{'1'}</TableCell>
+                      <TableCell></TableCell>
+                      <TableCell></TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      </>
+    );
+  };
+
   return (
     <>
       <TableContainer className={classes.tableBody}>
         <Table stickyHeader size="small" aria-label="sticky table">
           <TableHead>
             <TableRow>
+              <TableCell></TableCell>
               {columns.map((column) => (
                 <TableCell key={column.id}>{column.label}</TableCell>
               ))}
@@ -82,22 +164,7 @@ export default function OrderGuideTable({ data, filterText }) {
           <TableBody>
             {filteredData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow hover tabIndex={-1} key={row.upc}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id}>
-                          {column.format
-                            ? column.format(filterText, value)
-                            : value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
+              .map(Row)}
           </TableBody>
         </Table>
       </TableContainer>
