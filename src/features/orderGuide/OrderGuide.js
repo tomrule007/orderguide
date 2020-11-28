@@ -7,6 +7,11 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
+import Box from '@material-ui/core/Box';
+import Collapse from '@material-ui/core/Collapse';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import IconButton from '@material-ui/core/IconButton';
 
 const highlightedText = (highlight, text) => {
   const parts = String(text).split(new RegExp(`(${highlight})`, 'gi'));
@@ -39,6 +44,11 @@ const useStyles = makeStyles({
   tableFooter: {
     flex: '0 0 auto',
   },
+  noBottomBorder: {
+    '& > *': {
+      borderBottom: 'unset',
+    },
+  },
 });
 
 const rowIncludes = (filterText) => (row) => {
@@ -46,7 +56,11 @@ const rowIncludes = (filterText) => (row) => {
 
   return columnsToSearch
     .map((column) => row[column])
-    .some((value) => String(value).toLowerCase().includes(filterText));
+    .some((value) =>
+      String(value)
+        .toLowerCase()
+        .includes(filterText)
+    );
 };
 
 export default function OrderGuideTable({ data, filterText }) {
@@ -68,12 +82,106 @@ export default function OrderGuideTable({ data, filterText }) {
       filterText ? data.filter(rowIncludes(filterText.toLowerCase())) : data,
     [data, filterText]
   );
+
+  // TODO: Lift this date creation state to redux
+  // Date Utilities
+  function addDays(date, days) {
+    const copy = new Date(Number(date));
+    copy.setDate(date.getDate() + days);
+    return copy;
+  }
+  const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const today = new Date();
+
+  // Get Date & Day of week for previous 7 days, ending with yesterday
+  const days = [-7, -6, -5, -4, -3, -2, -1].map((daysAgo) => {
+    const date = addDays(today, daysAgo);
+    const dayOfWeek = WEEKDAYS[date.getDay()];
+    const dateString =
+      String(date.getFullYear()) +
+      '_' +
+      String(date.getMonth() + 1).padStart(2, '0') +
+      '_' +
+      String(date.getDate()).padStart(2, '0');
+    return {
+      date,
+      dateString,
+      dayOfWeek,
+    };
+  });
+
+  const Row = (props) => {
+    const { row } = props;
+    const [open, setOpen] = React.useState(false);
+    const classes = useStyles();
+
+    const pastSales = days.map((day) => {
+      const salesData = JSON.parse(localStorage.getItem(day.dateString));
+      if (salesData && salesData[row.upc]) {
+        const { pack, totalMovement } = salesData[row.upc];
+        const casesSold = (totalMovement / pack).toFixed(1);
+        return casesSold;
+      } else {
+        return 'n/a';
+      }
+    });
+
+    return (
+      <>
+        <TableRow hover tabIndex={-1} className={classes.noBottomBorder}>
+          <TableCell>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+          {columns.map((column) => {
+            const value = row[column.id];
+            return (
+              <TableCell key={column.id}>
+                {column.format ? column.format(filterText, value) : value}
+              </TableCell>
+            );
+          })}
+        </TableRow>
+        <TableRow>
+          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+              <Box margin={1}>
+                <Table size="small" aria-label="purchases">
+                  <TableHead>
+                    <TableRow>
+                      {days.map((day) => (
+                        <TableCell>{day.dayOfWeek}</TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow>
+                      {pastSales.map((caseCount) => (
+                        <TableCell>{caseCount}</TableCell>
+                      ))}
+                    </TableRow>
+                  </TableBody>
+                </Table>
+              </Box>
+            </Collapse>
+          </TableCell>
+        </TableRow>
+      </>
+    );
+  };
+
   return (
     <>
       <TableContainer className={classes.tableBody}>
         <Table stickyHeader size="small" aria-label="sticky table">
           <TableHead>
             <TableRow>
+              <TableCell></TableCell>
               {columns.map((column) => (
                 <TableCell key={column.id}>{column.label}</TableCell>
               ))}
@@ -82,22 +190,9 @@ export default function OrderGuideTable({ data, filterText }) {
           <TableBody>
             {filteredData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow hover tabIndex={-1} key={row.upc}>
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id}>
-                          {column.format
-                            ? column.format(filterText, value)
-                            : value}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
+              .map((row) => (
+                <Row row={row} key={row.upc} />
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

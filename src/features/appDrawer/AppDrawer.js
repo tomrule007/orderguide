@@ -5,6 +5,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 
 import FileLoader from '../fileLoader/FileLoader';
+import SalesLoader from '../salesLoader/SalesLoader';
 
 import { toggleDrawer } from './appDrawerSlice';
 
@@ -33,6 +34,9 @@ export default function AppDrawer() {
       <List>
         <ListItem>
           <FileLoader />
+        </ListItem>
+        <ListItem>
+          <SalesLoader />
         </ListItem>
       </List>
     </SwipeableDrawer>
