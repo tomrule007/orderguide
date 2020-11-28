@@ -117,7 +117,7 @@ const ScannerVideo = ({ onDetected, enabled }) => {
       Quagga.offProcessed(handleProcessed);
       Quagga.stop();
     };
-  }, []);
+  }, [errorCheck]);
   return (
     <div ref={scannerRef} style={{ position: 'relative' }}>
       <canvas

@@ -35,7 +35,7 @@ const useStyles = makeStyles({
 
 function App() {
   const dispatch = useDispatch();
-  useEffect(() => dispatch(getOrderGuideData()), []);
+  useEffect(() => dispatch(getOrderGuideData()), [dispatch]);
   const { data } = useSelector((state) => state.orderGuide);
   const filterText = useSelector(selectFilterText);
   const isLoading = useSelector((state) => state.fileLoader.isLoading);
