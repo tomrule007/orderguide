@@ -30,7 +30,7 @@ export const { loading, success, failure } = fileLoaderSlice.actions;
 const labelSalesColumns = (row) => ({
   brand: row[0],
   description: row[1],
-  upc: row[2],
+  upc: parseInt(row[2], 10),
   size: row[3],
   pack: row[4],
   currentRetail: row[6],

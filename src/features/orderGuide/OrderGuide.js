@@ -97,21 +97,38 @@ export default function OrderGuideTable({ data, filterText }) {
   const days = [-7, -6, -5, -4, -3, -2, -1].map((daysAgo) => {
     const date = addDays(today, daysAgo);
     const dayOfWeek = WEEKDAYS[date.getDay()];
-    return { date, dayOfWeek };
+    const dateString =
+      String(date.getFullYear()) +
+      '_' +
+      String(date.getMonth() + 1).padStart(2, '0') +
+      '_' +
+      String(date.getDate()).padStart(2, '0');
+    return {
+      date,
+      dateString,
+      dayOfWeek,
+    };
   });
-  console.log(days);
-  const Row = (row) => {
+
+  const Row = (props) => {
+    const { row } = props;
     const [open, setOpen] = React.useState(false);
     const classes = useStyles();
 
+    const pastSales = days.map((day) => {
+      const salesData = JSON.parse(localStorage.getItem(day.dateString));
+      if (salesData && salesData[row.upc]) {
+        const { pack, totalMovement } = salesData[row.upc];
+        const casesSold = (totalMovement / pack).toFixed(1);
+        return casesSold;
+      } else {
+        return 'n/a';
+      }
+    });
+
     return (
       <>
-        <TableRow
-          hover
-          tabIndex={-1}
-          key={row.upc}
-          className={classes.noBottomBorder}
-        >
+        <TableRow hover tabIndex={-1} className={classes.noBottomBorder}>
           <TableCell>
             <IconButton
               aria-label="expand row"
@@ -144,8 +161,8 @@ export default function OrderGuideTable({ data, filterText }) {
                   </TableHead>
                   <TableBody>
                     <TableRow>
-                      {days.map((day) => (
-                        <TableCell>{day.date.toLocaleString()}</TableCell>
+                      {pastSales.map((caseCount) => (
+                        <TableCell>{caseCount}</TableCell>
                       ))}
                     </TableRow>
                   </TableBody>
@@ -173,7 +190,9 @@ export default function OrderGuideTable({ data, filterText }) {
           <TableBody>
             {filteredData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map(Row)}
+              .map((row) => (
+                <Row row={row} key={row.upc} />
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
