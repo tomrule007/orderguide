@@ -122,7 +122,7 @@ export default function OrderGuideTable({ data, filterText }) {
         const casesSold = (totalMovement / pack).toFixed(1);
         return casesSold;
       } else {
-        return 'n/a';
+        return salesData ? '0' : 'n/a';
       }
     });
 
