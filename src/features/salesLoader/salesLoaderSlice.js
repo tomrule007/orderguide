@@ -27,10 +27,16 @@ export const fileLoaderSlice = createSlice({
 
 export const { loading, success, failure } = fileLoaderSlice.actions;
 
+// The 'LNK' prefix is used to denote that multiple UPCs are linked to to one code
+// ex: extra large avocados and 32/40ct avocados are sold under the same large price
+// but each have their own registered UPC
+const removeLNKprefix = (str) =>
+  'LNK' === str.slice(0, 3) ? str.slice(3) : str;
+
 const labelSalesColumns = (row) => ({
   brand: row[0],
   description: row[1],
-  upc: parseInt(row[2], 10),
+  upc: parseInt(removeLNKprefix(row[2]), 10),
   size: row[3],
   pack: row[4],
   currentRetail: row[6],
