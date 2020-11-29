@@ -110,6 +110,9 @@ export default function OrderGuideTable({ data, filterText }) {
     };
   });
 
+  //TODO: Create custom css to also apply hover effect to sibling sales data row
+  //TODO: Possibly make desktop version only have one row with sales data always visible
+  // https://material-ui.com/components/use-media-query/
   const Row = (props) => {
     const { row } = props;
     const [open, setOpen] = React.useState(false);
@@ -128,13 +131,14 @@ export default function OrderGuideTable({ data, filterText }) {
 
     return (
       <>
-        <TableRow hover tabIndex={-1} className={classes.noBottomBorder}>
+        <TableRow
+          hover
+          tabIndex={-1}
+          className={classes.noBottomBorder}
+          onClick={() => setOpen(!open)}
+        >
           <TableCell>
-            <IconButton
-              aria-label="expand row"
-              size="small"
-              onClick={() => setOpen(!open)}
-            >
+            <IconButton aria-label="expand row" size="small">
               {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
             </IconButton>
           </TableCell>
@@ -147,7 +151,7 @@ export default function OrderGuideTable({ data, filterText }) {
             );
           })}
         </TableRow>
-        <TableRow>
+        <TableRow hover>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box margin={1}>
