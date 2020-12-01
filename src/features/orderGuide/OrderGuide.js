@@ -12,6 +12,8 @@ import Collapse from '@material-ui/core/Collapse';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import IconButton from '@material-ui/core/IconButton';
+import { useTheme } from '@material-ui/core/styles';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 
 const highlightedText = (highlight, text) => {
   const parts = String(text).split(new RegExp(`(${highlight})`, 'gi'));
@@ -66,6 +68,8 @@ const rowIncludes = (filterText) => (row) => {
 export default function OrderGuideTable({ data, filterText }) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const theme = useTheme();
+  const isLargeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -137,11 +141,13 @@ export default function OrderGuideTable({ data, filterText }) {
           className={classes.noBottomBorder}
           onClick={() => setOpen(!open)}
         >
-          <TableCell>
-            <IconButton aria-label="expand row" size="small">
-              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
-          </TableCell>
+          {!isLargeScreen && (
+            <TableCell>
+              <IconButton aria-label="expand row" size="small">
+                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+              </IconButton>
+            </TableCell>
+          )}
           {columns.map((column) => {
             const value = row[column.id];
             return (
@@ -150,31 +156,35 @@ export default function OrderGuideTable({ data, filterText }) {
               </TableCell>
             );
           })}
+          {isLargeScreen &&
+            pastSales.map((caseCount) => <TableCell>{caseCount}</TableCell>)}
         </TableRow>
-        <TableRow hover>
-          <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-            <Collapse in={open} timeout="auto" unmountOnExit>
-              <Box margin={1}>
-                <Table size="small" aria-label="purchases">
-                  <TableHead>
-                    <TableRow>
-                      {days.map((day) => (
-                        <TableCell>{day.dayOfWeek}</TableCell>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <TableRow>
-                      {pastSales.map((caseCount) => (
-                        <TableCell>{caseCount}</TableCell>
-                      ))}
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </Box>
-            </Collapse>
-          </TableCell>
-        </TableRow>
+        {!isLargeScreen && (
+          <TableRow hover>
+            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+              <Collapse in={open} timeout="auto" unmountOnExit>
+                <Box margin={1}>
+                  <Table size="small" aria-label="purchases">
+                    <TableHead>
+                      <TableRow>
+                        {days.map((day) => (
+                          <TableCell>{day.dayOfWeek}</TableCell>
+                        ))}
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      <TableRow>
+                        {pastSales.map((caseCount) => (
+                          <TableCell>{caseCount}</TableCell>
+                        ))}
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </Box>
+              </Collapse>
+            </TableCell>
+          </TableRow>
+        )}
       </>
     );
   };
@@ -185,10 +195,12 @@ export default function OrderGuideTable({ data, filterText }) {
         <Table stickyHeader size="small" aria-label="sticky table">
           <TableHead>
             <TableRow>
-              <TableCell></TableCell>
+              {!isLargeScreen && <TableCell></TableCell>}
               {columns.map((column) => (
                 <TableCell key={column.id}>{column.label}</TableCell>
               ))}
+              {isLargeScreen &&
+                days.map((day) => <TableCell>{day.dayOfWeek}</TableCell>)}
             </TableRow>
           </TableHead>
           <TableBody>
