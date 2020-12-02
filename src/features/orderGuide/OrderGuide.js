@@ -14,6 +14,7 @@ import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import IconButton from '@material-ui/core/IconButton';
 import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const highlightedText = (highlight, text) => {
   const parts = String(text).split(new RegExp(`(${highlight})`, 'gi'));
@@ -114,6 +115,55 @@ export default function OrderGuideTable({ data, filterText }) {
     };
   });
 
+  const SalesHeaderCell = (day) => (
+    <Tooltip
+      title={day.dateString.replace(/(\d+)_(\d+)_(\d+)/, '$2/$3/$1')}
+      placement="top"
+      arrow
+    >
+      <TableCell>{day.dayOfWeek}</TableCell>
+    </Tooltip>
+  );
+  const SalesCell = (salesData) => {
+    if (salesData === 'n/a') return <TableCell> {'n/a'} </TableCell>;
+    if (salesData === undefined) return <TableCell> {'0'}</TableCell>;
+
+    const {
+      description,
+      size,
+      pack,
+      currentRetail,
+      onSale,
+      salesDollars,
+      totalMovement,
+    } = salesData;
+
+    const caseCount = (totalMovement / pack).toFixed(1);
+
+    return (
+      <Tooltip
+        title={
+          <>
+            <u>{description}</u>
+            <br />
+            <b>{'Retail $'}</b> {currentRetail} {onSale && <b> {'ONSALE!!'}</b>}
+            <br />
+            <b>{'Pack: '}</b>
+            {pack} <b>{' x '}</b> {size}
+            <br />
+            <b>{'Units Sold: '}</b> {totalMovement}
+            <br />
+            <b>{'Total Income  $'}</b> {salesDollars}
+          </>
+        }
+        placement="top"
+        arrow
+      >
+        <TableCell>{caseCount}</TableCell>
+      </Tooltip>
+    );
+  };
+
   //TODO: Create custom css to also apply hover effect to sibling sales data row
   //TODO: Possibly make desktop version only have one row with sales data always visible
   // https://material-ui.com/components/use-media-query/
@@ -122,15 +172,9 @@ export default function OrderGuideTable({ data, filterText }) {
     const [open, setOpen] = React.useState(false);
     const classes = useStyles();
 
-    const pastSales = days.map((day) => {
+    const salesHistory = days.map((day) => {
       const salesData = JSON.parse(localStorage.getItem(day.dateString));
-      if (salesData && salesData[row.upc]) {
-        const { pack, totalMovement } = salesData[row.upc];
-        const casesSold = (totalMovement / pack).toFixed(1);
-        return casesSold;
-      } else {
-        return salesData ? '0' : 'n/a';
-      }
+      return salesData ? salesData[row.upc] : 'n/a';
     });
 
     return (
@@ -156,8 +200,7 @@ export default function OrderGuideTable({ data, filterText }) {
               </TableCell>
             );
           })}
-          {isLargeScreen &&
-            pastSales.map((caseCount) => <TableCell>{caseCount}</TableCell>)}
+          {isLargeScreen && salesHistory.map(SalesCell)}
         </TableRow>
         {!isLargeScreen && (
           <TableRow hover>
@@ -166,18 +209,10 @@ export default function OrderGuideTable({ data, filterText }) {
                 <Box margin={1}>
                   <Table size="small" aria-label="purchases">
                     <TableHead>
-                      <TableRow>
-                        {days.map((day) => (
-                          <TableCell>{day.dayOfWeek}</TableCell>
-                        ))}
-                      </TableRow>
+                      <TableRow>{days.map(SalesHeaderCell)}</TableRow>
                     </TableHead>
                     <TableBody>
-                      <TableRow>
-                        {pastSales.map((caseCount) => (
-                          <TableCell>{caseCount}</TableCell>
-                        ))}
-                      </TableRow>
+                      <TableRow>{salesHistory.map(SalesCell)}</TableRow>
                     </TableBody>
                   </Table>
                 </Box>
@@ -199,8 +234,7 @@ export default function OrderGuideTable({ data, filterText }) {
               {columns.map((column) => (
                 <TableCell key={column.id}>{column.label}</TableCell>
               ))}
-              {isLargeScreen &&
-                days.map((day) => <TableCell>{day.dayOfWeek}</TableCell>)}
+              {isLargeScreen && days.map(SalesHeaderCell)}
             </TableRow>
           </TableHead>
           <TableBody>
