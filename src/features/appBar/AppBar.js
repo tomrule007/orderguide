@@ -8,13 +8,7 @@ import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
-import Icon from '@mdi/react';
-import { mdiBarcodeScan } from '@mdi/js';
 
-import {
-  setOpen,
-  setEnableScanner,
-} from '../barcodeScannerModal/barcodeScannerModalSlice';
 import { toggleDrawer } from '../appDrawer/appDrawerSlice';
 import { setFilterText, selectFilterText } from './appBarSlice';
 
@@ -24,15 +18,6 @@ const useStyles = makeStyles((theme) => ({
   },
   menuButton: {
     marginRight: theme.spacing(2),
-  },
-  barcodeButton: {
-    height: '100%',
-    position: 'absolute',
-    top: '0px',
-    right: '0px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   title: {
     flexGrow: 1,
@@ -120,19 +105,6 @@ export default function MyAppBar() {
               }}
               inputProps={{ 'aria-label': 'search' }}
             />
-            <div className={classes.barcodeButton}>
-              <IconButton
-                edge="start"
-                color="inherit"
-                aria-label="open barcode scanner"
-                onClick={() => {
-                  dispatch(setEnableScanner(true));
-                  dispatch(setOpen(true));
-                }}
-              >
-                <Icon path={mdiBarcodeScan} title="barcode scan" size={1} />
-              </IconButton>
-            </div>
           </div>
         </Toolbar>
       </AppBar>
