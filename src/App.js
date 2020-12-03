@@ -6,7 +6,6 @@ import AppBar from './features/appBar/AppBar';
 import AppDrawer from './features/appDrawer/AppDrawer';
 import OrderGuide from './features/orderGuide/OrderGuide';
 import FileLoader from './features/fileLoader/FileLoader';
-import BarcodeScannerModal from './features/barcodeScannerModal/BarcodeScannerModal';
 import { getOrderGuideData } from './features/orderGuide/orderGuideSlice';
 import { selectFilterText } from './features/appBar/appBarSlice';
 
@@ -45,7 +44,6 @@ function App() {
     <div className={classes.app}>
       <AppDrawer />
       <AppBar />
-      <BarcodeScannerModal />
       <InstructionalModal />
       {isLoading ? (
         <div className={classes.center}>
