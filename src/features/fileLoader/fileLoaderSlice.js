@@ -32,10 +32,23 @@ const createData = (rows) =>
     const brand = String(row[2]).trim();
     const upc = row[3];
     const description = String(row[4]).trim();
-    const retail = row[14];
-    const caseCost = row[16];
+    const deliveryDays = row[5];
+    const unitCost = Number(row[13]);
+    const retail = Number(row[14]);
+    const grossMargin = Number((row[15] * 100).toFixed(2));
+    const caseCost = Number(Number(row[16]).toFixed(2));
     const caseRetail = Number((caseCost * 1.25).toFixed(2));
-    return { brand, upc, description, retail, caseRetail };
+    return {
+      brand,
+      upc,
+      description,
+      deliveryDays,
+      retail,
+      grossMargin,
+      unitCost,
+      caseCost,
+      caseRetail,
+    };
   });
 
 const removeDuplicates = (data, key) => {
