@@ -2,15 +2,15 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from '@material-ui/core/styles';
-import AppBar from './features/appBar/AppBar';
-import AppDrawer from './features/appDrawer/AppDrawer';
-import OrderGuide from './features/orderGuide/OrderGuide';
-import FileLoader from './features/fileLoader/FileLoader';
-import { getOrderGuideData } from './features/orderGuide/orderGuideSlice';
-import { selectFilterText } from './features/appBar/appBarSlice';
+import AppBar from './components/appBar/AppBar';
+import AppDrawer from './components/appDrawer/AppDrawer';
+import OrderGuide from './components/ProductTable/ProductTable';
+import FileLoader from './components/fileLoader/FileLoader';
+import { getOrderGuideData } from './components/ProductTable/orderGuideSlice';
+import { selectFilterText } from './components/appBar/appBarSlice';
 
-import InstructionalModal from './features/instructionModal/InstructionModal';
-import MockDataLink from './features/mockDataLink/MockDataLink';
+import InstructionalModal from './components/instructionModal/InstructionModal';
+import MockDataLink from './components/mockDataLink/MockDataLink';
 
 const useStyles = makeStyles({
   app: {

@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
-import orderGuideReducer from '../features/orderGuide/orderGuideSlice';
-import fileLoaderReducer from '../features/fileLoader/fileLoaderSlice';
-import appDrawerReducer from '../features/appDrawer/appDrawerSlice';
-import appBarReducer from '../features/appBar/appBarSlice';
+import counterReducer from 'components/counter/counterSlice';
+import orderGuideReducer from 'components/ProductTable/orderGuideSlice';
+import fileLoaderReducer from 'components/fileLoader/fileLoaderSlice';
+import appDrawerReducer from 'components/appDrawer/appDrawerSlice';
+import appBarReducer from 'components/appBar/appBarSlice';
 export default configureStore({
   reducer: {
     counter: counterReducer,

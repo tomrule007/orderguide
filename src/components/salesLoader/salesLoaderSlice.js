@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import XLSX from 'xlsx';
 
-import { getOrderGuideData } from '../orderGuide/orderGuideSlice';
+import { getOrderGuideData } from 'components/ProductTable/orderGuideSlice';
 
 export const fileLoaderSlice = createSlice({
   name: 'salesFileLoader',
