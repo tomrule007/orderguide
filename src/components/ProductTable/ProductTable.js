@@ -7,16 +7,16 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import Box from '@material-ui/core/Box';
 import Collapse from '@material-ui/core/Collapse';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import IconButton from '@material-ui/core/IconButton';
 import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import Tooltip from '@material-ui/core/Tooltip';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
+import SalesSubHeaderCell from './SalesSubHeaderCell';
+import SalesCell from './SalesCell';
+import SalesHeaderCell from './SalesHeaderCell';
+// import ProductRow from './ProductRow';
 
 const highlightedText = (highlight, text) => {
   const parts = String(text).split(new RegExp(`(${highlight})`, 'gi'));
@@ -57,7 +57,12 @@ const columns = [
     hiddenOnSmall: true,
   },
 
-  { id: 'caseCost', label: 'Case Cost', format: toDollars },
+  {
+    id: 'caseCost',
+    label: 'Case Cost',
+    format: toDollars,
+    hiddenOnSmall: true,
+  },
 ];
 
 const useStyles = makeStyles({
@@ -137,64 +142,10 @@ export default function OrderGuideTable({ data, filterText }) {
     };
   });
 
-  const SalesSubHeaderCell = (day) => (
-    <Tooltip
-      title={day.dateString.replace(/(\d+)_(\d+)_(\d+)/, '$2/$3/$1')}
-      placement="top"
-      arrow
-    >
-      <TableCell>{day.dayOfWeek}</TableCell>
-    </Tooltip>
-  );
-  const SalesCell = (displayValue) => (salesData) => {
-    if (salesData === 'n/a') return <TableCell> {'n/a'} </TableCell>;
-    if (salesData === undefined) return <TableCell> {'0'}</TableCell>;
+  console.log(days);
 
-    const {
-      description,
-      size,
-      pack,
-      currentRetail,
-      onSale,
-      salesDollars,
-      totalMovement,
-    } = salesData;
-
-    const caseCount = (totalMovement / pack).toFixed(1);
-    const display = [
-      Number(totalMovement).toFixed(1),
-      caseCount,
-      '$' + Number(salesDollars).toFixed(2),
-    ][displayValue];
-    return (
-      <Tooltip
-        title={
-          <>
-            <u>{description}</u>
-            <br />
-            <b>{'Retail $'}</b> {currentRetail} {onSale && <b> {'ONSALE!!'}</b>}
-            <br />
-            <b>{'Pack: '}</b>
-            {pack} <b>{' x '}</b> {size}
-            <br />
-            <b>{'Units Sold: '}</b> {totalMovement}
-            <br />
-            <b>{'Total Income  $'}</b> {salesDollars}
-          </>
-        }
-        placement="top"
-        arrow
-      >
-        <TableCell>{display}</TableCell>
-      </Tooltip>
-    );
-  };
-
-  //TODO: Create custom css to also apply hover effect to sibling sales data row
-  //TODO: Possibly make desktop version only have one row with sales data always visible
-  // https://material-ui.com/components/use-media-query/
-  const Row = (props) => {
-    const { row, display, setDisplay } = props;
+  const ProductRow = (props) => {
+    const { row, display, setDisplay, days } = props;
     const [open, setOpen] = React.useState(false);
     const classes = useStyles();
 
@@ -226,28 +177,42 @@ export default function OrderGuideTable({ data, filterText }) {
               </TableCell>
             );
           })}
-          {isLargeScreen && salesHistory.map(SalesCell(display))}
+          {isLargeScreen &&
+            salesHistory.map((salesData) => (
+              <SalesCell salesData={salesData} displayValue={display} />
+            ))}
         </TableRow>
         {!isLargeScreen && (
           <TableRow hover>
             <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
               <Collapse in={open} timeout="auto" unmountOnExit>
-                <Box margin={1}>
-                  <Table size="small" aria-label="purchases">
-                    <TableHead>
-                      <SalesHeaderCell
-                        selectValue={display}
-                        selectOnChange={(e) => setDisplay(e.target.value)}
-                      />
-                      <TableRow>{days.map(SalesSubHeaderCell)}</TableRow>
-                    </TableHead>
-                    <TableBody>
-                      <TableRow>
-                        {salesHistory.map(SalesCell(display))}
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </Box>
+                <p>
+                  {' '}
+                  {`UPC: ${row['upc']}       Case Cost: $${row['caseCost']}`}
+                </p>
+                <Table size="small" aria-label="purchases">
+                  <TableHead>
+                    <SalesHeaderCell
+                      selectValue={display}
+                      selectOnChange={(e) => setDisplay(e.target.value)}
+                    />
+                    <TableRow>
+                      {days.map((day) => {
+                        return <SalesSubHeaderCell day={day} />;
+                      })}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    <TableRow>
+                      {salesHistory.map((salesData) => (
+                        <SalesCell
+                          salesData={salesData}
+                          displayValue={display}
+                        />
+                      ))}
+                    </TableRow>
+                  </TableBody>
+                </Table>
               </Collapse>
             </TableCell>
           </TableRow>
@@ -255,18 +220,6 @@ export default function OrderGuideTable({ data, filterText }) {
       </>
     );
   };
-
-  const SalesHeaderCell = ({ selectValue, selectOnChange }) => (
-    <TableCell align={'center'} colSpan={7}>
-      {'Sales History ('}
-      <Select value={selectValue} onChange={selectOnChange}>
-        <MenuItem value={0}>Units</MenuItem>
-        <MenuItem value={1}>Cases</MenuItem>
-        <MenuItem value={2}>$</MenuItem>
-      </Select>
-      {')'}
-    </TableCell>
-  );
 
   return (
     <>
@@ -289,14 +242,17 @@ export default function OrderGuideTable({ data, filterText }) {
                   <TableCell key={column.id}>{column.label}</TableCell>
                 )
               )}
-              {isLargeScreen && days.map(SalesSubHeaderCell)}
+              {isLargeScreen &&
+                days.map((day) => <SalesSubHeaderCell day={day} />)}
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
-                <Row
+                <ProductRow
+                  days={days}
+                  isLargeScreen={isLargeScreen}
                   row={row}
                   key={row.upc}
                   display={display}
