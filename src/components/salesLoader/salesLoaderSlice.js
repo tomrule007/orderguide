@@ -33,25 +33,28 @@ export const { loading, success, failure } = fileLoaderSlice.actions;
 const removeLNKprefix = (str) =>
   'LNK' === str.slice(0, 3) ? str.slice(3) : str;
 
-const labelSalesColumns = (row) => ({
-  brand: row[0],
-  description: row[1],
-  upc: parseInt(removeLNKprefix(row[2]), 10),
-  size: row[3],
-  pack: row[4],
-  currentRetail: row[6],
-  onSale: row[6] !== row[7], // If currentRetail not equal reg retail it must be on sale
-  currentCaseCost: row[8],
-  isOrganic: row[9] === 'Y',
-  regularCaseCost: row[11],
-  regularUnitCost: row[12],
-  vendorName: row[13],
-  avgRetail: row[14],
-  totalMovement: row[15],
-  salesDollars: row[16],
-  grossProfitDollars: row[17],
-  grossProfitPercent: row[18],
-});
+const labelSalesColumns = (columnLookupMap) => (row) => {
+  const getColumn = (label) => row[columnLookupMap[label]];
+  return {
+    brand: getColumn('Brand Name'),
+    description: getColumn('Description'),
+    upc: parseInt(removeLNKprefix(getColumn('UPC')), 10),
+    size: getColumn('Size'),
+    pack: getColumn('Pack'),
+    currentRetail: getColumn('Current Retail'),
+    onSale: getColumn('Current Retail') !== getColumn('Current Reg Retail'),
+    currentCaseCost: getColumn('CurrentCaseCost'),
+    isOrganic: getColumn('Organic') === 'Y',
+    regularCaseCost: getColumn('Reg Case Cost'),
+    regularUnitCost: getColumn('Reg Unit Cost'),
+    vendorName: getColumn('Vendor Name'),
+    avgRetail: getColumn('Avg Retail'),
+    totalMovement: getColumn('Total Movement'),
+    salesDollars: getColumn('Sales $'),
+    grossProfitDollars: getColumn('GP$'),
+    grossProfitPercent: getColumn('GP%'),
+  };
+};
 
 const normalizeByUPCReducer = (acc, item) => {
   acc[item.upc] = { ...item };
@@ -75,13 +78,19 @@ export const loadFile = (file) => async (dispatch) => {
     /* Convert array of arrays */
     // TODO: Lookup what header option actually does
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
+    console.log(rows);
+    const columnLookupMap = rows[2].reduce((lookupMap, columnTitle, index) => {
+      lookupMap[columnTitle] = index;
+      return lookupMap;
+    }, {});
+    console.log(columnLookupMap);
     // TODO: add totals back into dataset
     const data = rows
       .slice(4, -2) //Remove header rows and total rows
-      .map(labelSalesColumns)
+      .map(labelSalesColumns(columnLookupMap))
       .reduce(normalizeByUPCReducer, {});
 
-    console.log(data);
+    console.log('DATA HERE', data);
 
     localStorage.setItem(date, JSON.stringify(data));
 
