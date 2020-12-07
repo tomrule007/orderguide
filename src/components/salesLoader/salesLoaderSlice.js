@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import localForage from 'localforage';
 import XLSX from 'xlsx';
 
 import { getOrderGuideData } from 'components/ProductTable/orderGuideSlice';
@@ -88,7 +89,7 @@ export const loadFile = (file) => async (dispatch) => {
       .map(labelSalesColumns(columnLookupMap))
       .reduce(normalizeByUPCReducer, {});
 
-    localStorage.setItem(date, JSON.stringify(data));
+    localForage.setItem(date, data);
 
     dispatch(success(date));
     dispatch(getOrderGuideData());

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -13,6 +13,7 @@ import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import IconButton from '@material-ui/core/IconButton';
 import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
+import localForage from 'localforage';
 import SalesSubHeaderCell from './SalesSubHeaderCell';
 import SalesCell from './SalesCell';
 import SalesHeaderCell from './SalesHeaderCell';
@@ -96,6 +97,7 @@ export default function OrderGuideTable({ data, filterText }) {
   const [page, setPage] = React.useState(0);
   const [display, setDisplay] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
+  const [dataWithSales, setDataWithSales] = useState([]);
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -142,15 +144,27 @@ export default function OrderGuideTable({ data, filterText }) {
     };
   });
 
+  useEffect(() => {
+    const attachSalesData = async () => {
+      const salesHistory = await Promise.all(
+        days.map((day) => localForage.getItem(day.dateString))
+      );
+
+      setDataWithSales(salesHistory);
+    };
+    attachSalesData();
+
+    return () => {};
+  }, [data]);
+
   const ProductRow = (props) => {
-    const { row, display, setDisplay, days } = props;
+    const { row, display, setDisplay, days, dataWithSales } = props;
     const [open, setOpen] = React.useState(false);
     const classes = useStyles();
 
-    const salesHistory = days.map((day) => {
-      const salesData = JSON.parse(localStorage.getItem(day.dateString));
-      return salesData ? salesData[row.upc] : 'n/a';
-    });
+    const salesHistory = dataWithSales.map((dayData) =>
+      dayData ? dayData[row.upc] : 'n/a'
+    );
 
     return (
       <>
@@ -256,6 +270,7 @@ export default function OrderGuideTable({ data, filterText }) {
                   key={row.upc}
                   display={display}
                   setDisplay={setDisplay}
+                  dataWithSales={dataWithSales}
                 />
               ))}
           </TableBody>
