@@ -142,8 +142,6 @@ export default function OrderGuideTable({ data, filterText }) {
     };
   });
 
-  console.log(days);
-
   const ProductRow = (props) => {
     const { row, display, setDisplay, days } = props;
     const [open, setOpen] = React.useState(false);
@@ -178,8 +176,8 @@ export default function OrderGuideTable({ data, filterText }) {
             );
           })}
           {isLargeScreen &&
-            salesHistory.map((salesData) => (
-              <SalesCell salesData={salesData} displayValue={display} />
+            salesHistory.map((salesData, i) => (
+              <SalesCell salesData={salesData} displayValue={display} key={i} />
             ))}
         </TableRow>
         {!isLargeScreen && (
@@ -197,17 +195,18 @@ export default function OrderGuideTable({ data, filterText }) {
                       selectOnChange={(e) => setDisplay(e.target.value)}
                     />
                     <TableRow>
-                      {days.map((day) => {
-                        return <SalesSubHeaderCell day={day} />;
+                      {days.map((day, i) => {
+                        return <SalesSubHeaderCell day={day} key={i} />;
                       })}
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     <TableRow>
-                      {salesHistory.map((salesData) => (
+                      {salesHistory.map((salesData, i) => (
                         <SalesCell
                           salesData={salesData}
                           displayValue={display}
+                          key={i}
                         />
                       ))}
                     </TableRow>
@@ -243,7 +242,7 @@ export default function OrderGuideTable({ data, filterText }) {
                 )
               )}
               {isLargeScreen &&
-                days.map((day) => <SalesSubHeaderCell day={day} />)}
+                days.map((day, i) => <SalesSubHeaderCell day={day} key={i} />)}
             </TableRow>
           </TableHead>
           <TableBody>

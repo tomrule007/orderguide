@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export const appBarSlice = createSlice({
   name: 'appBar',
   initialState: {
-    filterText: null,
+    filterText: '',
   },
   reducers: {
     setFilterText: (state, action) => {

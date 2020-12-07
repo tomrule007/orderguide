@@ -14,7 +14,7 @@ const SalesCell = ({ displayValue, salesData }) => {
     salesDollars,
     totalMovement,
   } = salesData;
-  console.log({ displayValue, salesData });
+
   const caseCount = (totalMovement / pack).toFixed(1);
   const display = [
     Number(totalMovement).toFixed(1),

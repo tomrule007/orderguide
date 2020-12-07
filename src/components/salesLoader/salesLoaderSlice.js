@@ -70,7 +70,7 @@ export const loadFile = (file) => async (dispatch) => {
 
     //TODO: Add file name validation
     const date = file.name.slice(6, -5); // Get date from 'sales_YYYY_MM_DD.xlsx'
-    console.log(date);
+
     /* Get first worksheet */
     const wsname = wb.SheetNames[0];
     const ws = wb.Sheets[wsname];
@@ -78,19 +78,15 @@ export const loadFile = (file) => async (dispatch) => {
     /* Convert array of arrays */
     // TODO: Lookup what header option actually does
     const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
-    console.log(rows);
     const columnLookupMap = rows[2].reduce((lookupMap, columnTitle, index) => {
       lookupMap[columnTitle] = index;
       return lookupMap;
     }, {});
-    console.log(columnLookupMap);
     // TODO: add totals back into dataset
     const data = rows
       .slice(4, -2) //Remove header rows and total rows
       .map(labelSalesColumns(columnLookupMap))
       .reduce(normalizeByUPCReducer, {});
-
-    console.log('DATA HERE', data);
 
     localStorage.setItem(date, JSON.stringify(data));
 

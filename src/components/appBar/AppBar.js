@@ -108,7 +108,7 @@ export default function MyAppBar() {
           </div>
         </Toolbar>
       </AppBar>
-      <div class={classes.offset} />
+      <div className={classes.offset} />
     </>
   );
 }
