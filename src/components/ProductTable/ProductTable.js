@@ -128,7 +128,7 @@ export default function OrderGuideTable({ data, filterText, days }) {
     attachSalesData();
 
     return () => {};
-  }, [data]);
+  }, [days, data]);
 
   const ProductRow = (props) => {
     const { row, display, setDisplay, days, dataWithSales } = props;

@@ -37,7 +37,7 @@ function App() {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getOrderGuideData());
-    dispatch(setDays(new Date()));
+    dispatch(setDays(Date.now()));
   }, [dispatch]);
   const { data } = useSelector((state) => state.orderGuide);
   const filterText = useSelector(selectFilterText);

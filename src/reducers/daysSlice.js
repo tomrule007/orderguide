@@ -9,7 +9,7 @@ export const daysSlice = createSlice({
   },
   reducers: {
     setDays: (state, action) => {
-      const today = action.payload;
+      const today = new Date(action.payload);
 
       state.days = [-7, -6, -5, -4, -3, -2, -1].map((daysAgo) => {
         const date = addDays(today, daysAgo);
