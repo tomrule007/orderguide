@@ -131,7 +131,7 @@ export default function OrderGuideTable({ data, filterText, days }) {
         <Table stickyHeader size="small" aria-label="sticky table">
           <TableHead>
             {isLargeScreen && (
-              <TableRow display={{ xs: 'none', md: 'block' }}>
+              <TableRow>
                 <TableCell colSpan={8}></TableCell>
                 <SalesHeaderCell
                   selectValue={display}
