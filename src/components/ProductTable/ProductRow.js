@@ -79,7 +79,7 @@ const ProductRow = (props) => {
             <Collapse in={open} timeout="auto" unmountOnExit>
               <p>
                 {' '}
-                {`UPC: ${row['upc']}       Case Cost: $${row['caseCost']}`}
+                {`Brand: ${row['brand']}       Case Cost: $${row['caseCost']}`}
               </p>
               <Table size="small" aria-label="purchases">
                 <TableHead>
