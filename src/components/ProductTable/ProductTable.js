@@ -7,17 +7,12 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import Collapse from '@material-ui/core/Collapse';
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import IconButton from '@material-ui/core/IconButton';
 import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import localForage from 'localforage';
 import SalesSubHeaderCell from './SalesSubHeaderCell';
-import SalesCell from './SalesCell';
 import SalesHeaderCell from './SalesHeaderCell';
-// import ProductRow from './ProductRow';
+import ProductRow from './ProductRow';
 
 const highlightedText = (highlight, text) => {
   const parts = String(text).split(new RegExp(`(${highlight})`, 'gi'));
@@ -130,83 +125,6 @@ export default function OrderGuideTable({ data, filterText, days }) {
     return () => {};
   }, [days, data]);
 
-  const ProductRow = (props) => {
-    const { row, display, setDisplay, days, dataWithSales } = props;
-    const [open, setOpen] = React.useState(false);
-    const classes = useStyles();
-
-    const salesHistory = dataWithSales.map((dayData) =>
-      dayData ? dayData[row.upc] : 'n/a'
-    );
-
-    return (
-      <>
-        <TableRow
-          hover
-          tabIndex={-1}
-          className={classes.noBottomBorder}
-          onClick={() => setOpen(!open)}
-        >
-          {!isLargeScreen && (
-            <TableCell>
-              <IconButton aria-label="expand row" size="small">
-                {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-              </IconButton>
-            </TableCell>
-          )}
-          {columns.map((column) => {
-            const value = row[column.id];
-            return !isLargeScreen && column.hiddenOnSmall ? null : (
-              <TableCell key={column.id}>
-                {column.format ? column.format(filterText, value) : value}
-              </TableCell>
-            );
-          })}
-          {isLargeScreen &&
-            salesHistory.map((salesData, i) => (
-              <SalesCell salesData={salesData} displayValue={display} key={i} />
-            ))}
-        </TableRow>
-        {!isLargeScreen && (
-          <TableRow hover>
-            <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-              <Collapse in={open} timeout="auto" unmountOnExit>
-                <p>
-                  {' '}
-                  {`UPC: ${row['upc']}       Case Cost: $${row['caseCost']}`}
-                </p>
-                <Table size="small" aria-label="purchases">
-                  <TableHead>
-                    <SalesHeaderCell
-                      selectValue={display}
-                      selectOnChange={(e) => setDisplay(e.target.value)}
-                    />
-                    <TableRow>
-                      {days.map((day, i) => {
-                        return <SalesSubHeaderCell day={day} key={i} />;
-                      })}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    <TableRow>
-                      {salesHistory.map((salesData, i) => (
-                        <SalesCell
-                          salesData={salesData}
-                          displayValue={display}
-                          key={i}
-                        />
-                      ))}
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </Collapse>
-            </TableCell>
-          </TableRow>
-        )}
-      </>
-    );
-  };
-
   return (
     <>
       <TableContainer className={classes.tableBody}>
@@ -244,6 +162,8 @@ export default function OrderGuideTable({ data, filterText, days }) {
                   display={display}
                   setDisplay={setDisplay}
                   dataWithSales={dataWithSales}
+                  columns={columns}
+                  filterText={filterText}
                 />
               ))}
           </TableBody>
