@@ -8,6 +8,7 @@ import OrderGuide from './components/ProductTable/ProductTable';
 import FileLoader from './components/fileLoader/FileLoader';
 import { getOrderGuideData } from './components/ProductTable/orderGuideSlice';
 import { selectFilterText } from './components/appBar/appBarSlice';
+import { setDays, selectDays } from './reducers/daysSlice';
 
 import InstructionalModal from './components/instructionModal/InstructionModal';
 import MockDataLink from './components/mockDataLink/MockDataLink';
@@ -34,10 +35,14 @@ const useStyles = makeStyles({
 
 function App() {
   const dispatch = useDispatch();
-  useEffect(() => dispatch(getOrderGuideData()), [dispatch]);
+  useEffect(() => {
+    dispatch(getOrderGuideData());
+    dispatch(setDays(new Date()));
+  }, [dispatch]);
   const { data } = useSelector((state) => state.orderGuide);
   const filterText = useSelector(selectFilterText);
   const isLoading = useSelector((state) => state.fileLoader.isLoading);
+  const days = useSelector(selectDays);
 
   const classes = useStyles();
   return (
@@ -51,7 +56,7 @@ function App() {
         </div>
       ) : data.length ? (
         <div className={classes.body}>
-          <OrderGuide data={data} filterText={filterText} />
+          <OrderGuide data={data} filterText={filterText} days={days} />
         </div>
       ) : (
         <div className={classes.center}>

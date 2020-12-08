@@ -93,7 +93,7 @@ const rowIncludes = (filterText) => (row) => {
     );
 };
 
-export default function OrderGuideTable({ data, filterText }) {
+export default function OrderGuideTable({ data, filterText, days }) {
   const [page, setPage] = React.useState(0);
   const [display, setDisplay] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
@@ -116,33 +116,6 @@ export default function OrderGuideTable({ data, filterText }) {
       filterText ? data.filter(rowIncludes(filterText.toLowerCase())) : data,
     [data, filterText]
   );
-
-  // TODO: Lift this date creation state to redux
-  // Date Utilities
-  function addDays(date, days) {
-    const copy = new Date(Number(date));
-    copy.setDate(date.getDate() + days);
-    return copy;
-  }
-  const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-  const today = new Date();
-
-  // Get Date & Day of week for previous 7 days, ending with yesterday
-  const days = [-7, -6, -5, -4, -3, -2, -1].map((daysAgo) => {
-    const date = addDays(today, daysAgo);
-    const dayOfWeek = WEEKDAYS[date.getDay()];
-    const dateString =
-      String(date.getFullYear()) +
-      '_' +
-      String(date.getMonth() + 1).padStart(2, '0') +
-      '_' +
-      String(date.getDate()).padStart(2, '0');
-    return {
-      date,
-      dateString,
-      dayOfWeek,
-    };
-  });
 
   useEffect(() => {
     const attachSalesData = async () => {
