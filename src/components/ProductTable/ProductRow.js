@@ -7,7 +7,6 @@ import {
   TableCell,
   TableRow,
   IconButton,
-  Box,
   Collapse,
 } from '@material-ui/core';
 import SalesCell from './SalesCell';
