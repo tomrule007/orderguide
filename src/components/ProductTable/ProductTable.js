@@ -69,11 +69,6 @@ const useStyles = makeStyles({
   tableFooter: {
     flex: '0 0 auto',
   },
-  noBottomBorder: {
-    '& > *': {
-      borderBottom: 'unset',
-    },
-  },
 });
 
 const rowIncludes = (filterText) => (row) => {
@@ -88,7 +83,7 @@ const rowIncludes = (filterText) => (row) => {
     );
 };
 
-export default function OrderGuideTable({ data, filterText, days }) {
+export default function ProductTable({ data, filterText, days }) {
   const [page, setPage] = React.useState(0);
   const [display, setDisplay] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
