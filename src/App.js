@@ -1,29 +1,22 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { useDispatch } from 'react-redux';
+import { Router } from '@reach/router';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from './components/appBar/AppBar';
 import AppDrawer from './components/appDrawer/AppDrawer';
-import OrderGuide from './components/ProductTable/ProductTable';
-import FileLoader from './components/fileLoader/FileLoader';
 import { getOrderGuideData } from './components/ProductTable/orderGuideSlice';
-import { selectFilterText } from './components/appBar/appBarSlice';
-import { setDays, selectDays } from './reducers/daysSlice';
+import { getSavedProductMap } from 'reducers/productMapSlice';
+import { setDays } from './reducers/daysSlice';
+import ProductPage from 'pages/ProductPage';
+import LinkPage from 'pages/LinkPage';
 
 import InstructionalModal from './components/instructionModal/InstructionModal';
-import MockDataLink from './components/mockDataLink/MockDataLink';
 
 const useStyles = makeStyles({
   app: {
     display: 'flex',
     flexDirection: 'column',
     height: '100vh',
-  },
-  center: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flex: '1 1 auto',
   },
   body: {
     flex: '1 1 auto',
@@ -38,11 +31,8 @@ function App() {
   useEffect(() => {
     dispatch(getOrderGuideData());
     dispatch(setDays(Date.now()));
+    dispatch(getSavedProductMap());
   }, [dispatch]);
-  const { data } = useSelector((state) => state.orderGuide);
-  const filterText = useSelector(selectFilterText);
-  const isLoading = useSelector((state) => state.fileLoader.isLoading);
-  const days = useSelector(selectDays);
 
   const classes = useStyles();
   return (
@@ -50,22 +40,10 @@ function App() {
       <AppDrawer />
       <AppBar />
       <InstructionalModal />
-      {isLoading ? (
-        <div className={classes.center}>
-          <CircularProgress size="5rem" />
-        </div>
-      ) : data.length ? (
-        <div className={classes.body}>
-          <OrderGuide data={data} filterText={filterText} days={days} />
-        </div>
-      ) : (
-        <div className={classes.center}>
-          <div>
-            <FileLoader />
-            <MockDataLink />
-          </div>
-        </div>
-      )}
+      <Router className={classes.body}>
+        <ProductPage path="/" />
+        <LinkPage path="links/:salesDataId" />
+      </Router>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Link } from '@reach/router';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -37,6 +38,12 @@ export default function AppDrawer() {
         </ListItem>
         <ListItem>
           <SalesLoader />
+        </ListItem>
+        <ListItem>
+          <Link to="/">OrderGuide</Link>
+        </ListItem>
+        <ListItem>
+          <Link to="links">Items Links</Link>
         </ListItem>
       </List>
     </SwipeableDrawer>
