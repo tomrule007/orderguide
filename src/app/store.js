@@ -4,6 +4,7 @@ import fileLoaderReducer from 'components/fileLoader/fileLoaderSlice';
 import appDrawerReducer from 'components/appDrawer/appDrawerSlice';
 import appBarReducer from 'components/appBar/appBarSlice';
 import daysReducer from 'reducers/daysSlice';
+import productMapReducer from 'reducers/productMapSlice';
 export default configureStore({
   reducer: {
     orderGuide: orderGuideReducer,
@@ -11,5 +12,6 @@ export default configureStore({
     appDrawer: appDrawerReducer,
     appBar: appBarReducer,
     days: daysReducer,
+    productMap: productMapReducer,
   },
 });
