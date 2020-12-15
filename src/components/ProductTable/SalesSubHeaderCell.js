@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from '@reach/router';
 import { TableCell, Tooltip } from '@material-ui/core';
 
 const SalesSubHeaderCell = ({ day }) => (
@@ -7,7 +8,9 @@ const SalesSubHeaderCell = ({ day }) => (
     placement="top"
     arrow
   >
-    <TableCell>{day.dayOfWeek}</TableCell>
+    <TableCell>
+      <Link to={`links/${day.dateString}`}>{day.dayOfWeek}</Link>
+    </TableCell>
   </Tooltip>
 );
 
