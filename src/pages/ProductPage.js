@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -7,6 +7,7 @@ import FileLoader from 'components/fileLoader/FileLoader';
 import MockDataLink from 'components/mockDataLink/MockDataLink';
 import { selectFilterText } from 'components/appBar/appBarSlice';
 import { selectDays } from 'reducers/daysSlice';
+import { selectProductMap } from 'reducers/productMapSlice';
 
 const useStyles = makeStyles({
   center: {
@@ -29,12 +30,18 @@ const ProductList = () => {
   const filterText = useSelector(selectFilterText);
   const isLoading = useSelector((state) => state.fileLoader.isLoading);
   const days = useSelector(selectDays);
+  const productMap = useSelector(selectProductMap);
   return isLoading ? (
     <div className={classes.center}>
       <CircularProgress size="5rem" />
     </div>
   ) : data.length ? (
-    <ProductTable data={data} filterText={filterText} days={days} />
+    <ProductTable
+      productMap={productMap}
+      data={data}
+      filterText={filterText}
+      days={days}
+    />
   ) : (
     <div className={classes.center}>
       <div>
