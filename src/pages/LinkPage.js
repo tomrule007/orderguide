@@ -10,6 +10,7 @@ import FilterSelect from 'components/FilterSelect/FilterSelect';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Box, Typography } from '@material-ui/core';
 import LinkDataLoader from 'components/linkDataLoader/LinkDataLoader';
+import { exportProductMapFile } from 'reducers/productMapSlice';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -148,7 +149,14 @@ export default function LinkPage({ salesDataId }) {
             onSelect={setSelectedLinkedItem}
           />
           <Box className={classes.margin}>
-            <Button variant="contained">Export</Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                exportProductMapFile(productMap);
+              }}
+            >
+              Export
+            </Button>
             <Button
               variant="contained"
               onClick={() => dispatch(removeLink(selectedLinkedItem))}

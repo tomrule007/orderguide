@@ -99,3 +99,18 @@ export const loadProductMapFile = async (file) => {
     return {};
   }
 };
+
+export const exportProductMapFile = (productMap) => {
+  /* create a new blank workbook */
+  var wb = XLSX.utils.book_new();
+  /* make worksheet */
+  var ws = XLSX.utils.aoa_to_sheet([
+    ['salesUPC', 'orderGuideUPC'],
+    ...(Object.entries(productMap) || []),
+  ]);
+
+  /* Add the worksheet to the workbook */
+  XLSX.utils.book_append_sheet(wb, ws, 'testName');
+
+  XLSX.writeFile(wb, 'exportProductMap.xlsx');
+};
