@@ -83,7 +83,9 @@ const rowIncludes = (filterText) => (row) => {
     );
 };
 
-export default function ProductTable({ data, filterText, days }) {
+export default function ProductTable({ data, filterText, days, productMap }) {
+  //TODO: The zillion unnecessary rerenders
+  console.count('Table Render');
   const [page, setPage] = React.useState(0);
   const [display, setDisplay] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
@@ -113,12 +115,49 @@ export default function ProductTable({ data, filterText, days }) {
         days.map((day) => localForage.getItem(day.dateString))
       );
 
-      setDataWithSales(salesHistory);
+      const normalizedOrderGuide = Object.fromEntries(
+        data.map((item) => [item.upc, item])
+      );
+      const getSalesDataOrderGuideLinker = (orderGuide, productLinkMap) => (
+        salesData
+      ) =>
+        salesData &&
+        Object.entries(salesData)
+          .filter(([upc, salesItem]) => salesItem.totalMovement > 0)
+          .reduce(
+            (acc, cur) => {
+              const [salesUPC, salesItem] = cur;
+              // TODO: Determine if this is the right business decision.
+              //       This setup will allow users to override matching products
+              //       using there link before checking if the product already has a match.
+              const lookupUPC = productLinkMap[salesUPC] || salesUPC;
+              const orderGuideItemMatch = normalizedOrderGuide[lookupUPC];
+              const alreadyAddedItems = acc[lookupUPC] || [];
+              return {
+                ...acc,
+                ...(orderGuideItemMatch
+                  ? { [lookupUPC]: [...alreadyAddedItems, salesItem] }
+                  : { unlinked: [...acc.unlinked, [lookupUPC, salesItem]] }),
+              };
+            },
+            { unlinked: [] }
+          );
+
+      const salesDataOrderGuideLinker = getSalesDataOrderGuideLinker(
+        normalizedOrderGuide,
+        productMap
+      );
+
+      const linkedSalesHistory = salesHistory.map((salesData) =>
+        salesDataOrderGuideLinker(salesData)
+      );
+      console.log(linkedSalesHistory);
+      setDataWithSales(linkedSalesHistory);
     };
     attachSalesData();
 
     return () => {};
-  }, [days, data]);
+  }, [days, data, productMap]);
 
   return (
     <>
