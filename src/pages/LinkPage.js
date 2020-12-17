@@ -9,6 +9,7 @@ import localForage from 'localforage';
 import FilterSelect from 'components/FilterSelect/FilterSelect';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button, Box, Typography } from '@material-ui/core';
+import LinkDataLoader from 'components/linkDataLoader/LinkDataLoader';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,7 +43,6 @@ export default function LinkPage({ salesDataId }) {
   console.log('productMap', productMap);
   useEffect(() => {
     if (Object.keys(productMap).length !== 0) {
-      console.log('not empty, setting', productMap);
       localStorage.setItem('links', JSON.stringify(productMap));
     }
     if (data.length === 0) return; // do not run if orderguide is empty
@@ -55,7 +55,6 @@ export default function LinkPage({ salesDataId }) {
       const unlinkedItems = Object.values(soldItems || {})
         .filter(({ totalMovement }) => totalMovement > 0)
         .filter(({ upc }) => !normalizedOrderGuide[upc]);
-      console.log('unlinked', unlinkedItems);
       setUnlinkedSalesItemList(unlinkedItems);
       setSalesItems(soldItems);
       setOrderGuide(normalizedOrderGuide);
@@ -66,8 +65,6 @@ export default function LinkPage({ salesDataId }) {
   }, [salesDataId, data, productMap]);
 
   const handleLinkOnClick = () => {
-    console.log('selected SalesItem', selectedSalesItem);
-    console.log('selected OrderGuide Item: ', selectedOrderGuideItem);
     const newLinkedList = {
       ...manuallyLinkedItems,
       [selectedSalesItem]: String(selectedOrderGuideItem),
@@ -83,12 +80,13 @@ export default function LinkPage({ salesDataId }) {
   const linkedItemsDisplay =
     salesItems && orderGuide
       ? Object.entries(productMap).map(([saleUPC, orderGuideUPC]) => ({
-          display: `${saleUPC} ${salesItems[saleUPC].description}  <-> ${orderGuideUPC} ${orderGuide[orderGuideUPC].description} `,
+          display: `${saleUPC} ${salesItems[saleUPC] &&
+            salesItems[saleUPC].description}  <-> ${orderGuideUPC} ${orderGuide[
+            orderGuideUPC
+          ] && orderGuide[orderGuideUPC].description} `,
           value: saleUPC,
         }))
       : [];
-  console.log('manuallly linked', manuallyLinkedItems, linkedItemsDisplay);
-  console.log('selectedLinkedItem', selectedLinkedItem);
   return (
     <div className={classes.root}>
       <Box
@@ -102,10 +100,12 @@ export default function LinkPage({ salesDataId }) {
           {data.length && (
             <FilterSelect
               title={'Unlinked Sales Items'}
-              data={unlinkedSalesItemList.map((item) => ({
-                display: `${item.upc} ${item.description}`,
-                value: item.upc,
-              }))}
+              data={unlinkedSalesItemList
+                .filter((item) => !manuallyLinkedItems[item.upc])
+                .map((item) => ({
+                  display: `${item.upc} ${item.description}`,
+                  value: item.upc,
+                }))}
               selectedValue={selectedSalesItem}
               onSelect={setSelectedSalesItem}
             />
@@ -155,7 +155,7 @@ export default function LinkPage({ salesDataId }) {
             >
               Remove
             </Button>
-            <Button variant="contained">Import</Button>
+            <LinkDataLoader />
           </Box>
         </Box>
       )}

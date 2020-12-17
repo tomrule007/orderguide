@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import localForage from 'localforage';
+import XLSX from 'xlsx';
 
 export const productMapSlice = createSlice({
   name: 'productMap',
@@ -75,4 +76,26 @@ export const getLinkedSalesData = async (orderGuide, productMap, days) => {
   );
   console.log('im linky', linkedSalesHistory);
   return linkedSalesHistory;
+};
+
+// TODO: Make central file loading thunk that loads all types of files
+export const loadProductMapFile = async (file) => {
+  const isBase64 = typeof file === 'string';
+  try {
+    const wb = XLSX.read(isBase64 ? file : await file.arrayBuffer(), {
+      type: isBase64 ? 'base64' : 'array',
+    });
+
+    /* Get first worksheet */
+    const wsname = wb.SheetNames[0];
+    const ws = wb.Sheets[wsname];
+
+    /* Convert array of arrays */
+    const rows = XLSX.utils.sheet_to_json(ws, { header: 1 });
+
+    return Object.fromEntries(rows.slice(1)); //Remove Header row
+  } catch (error) {
+    console.log('loadingProductMapFile ERROR', error);
+    return {};
+  }
 };
