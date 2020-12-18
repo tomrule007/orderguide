@@ -28,6 +28,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+//TODO:
+// 1) Prevent item selects from causing all 3 lists to be repaint themselves
+// 2) Component shouldn't handle any of the data persisting (remove localforage)
+// 3) Improve responsiveness
+//      * horizontal flex should turn vertical on small screens instead of just wrapping
+//      * Linked Item list should fill more width of the screen
+//      * export, remove, import buttons on single line or moved else were
+// 4) Fix react-window to use real element height (SelectFilter component issue)
 export default function LinkPage({ salesDataId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
