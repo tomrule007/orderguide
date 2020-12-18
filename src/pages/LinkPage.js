@@ -37,11 +37,10 @@ export default function LinkPage({ salesDataId }) {
   const [selectedSalesItem, setSelectedSalesItem] = useState(null);
   const [selectedOrderGuideItem, setSelectedOrderGuideItem] = useState(null);
   const [selectedLinkedItem, setSelectedLinkedItem] = useState(null);
-  const [manuallyLinkedItems, setManuallyLinkedItems] = useState({});
 
   const { data } = useSelector((state) => state.orderGuide);
   const productMap = useSelector(selectProductMap);
-  console.log('productMap', productMap);
+
   useEffect(() => {
     if (Object.keys(productMap).length !== 0) {
       localStorage.setItem('links', JSON.stringify(productMap));
@@ -66,16 +65,10 @@ export default function LinkPage({ salesDataId }) {
   }, [salesDataId, data, productMap]);
 
   const handleLinkOnClick = () => {
-    const newLinkedList = {
-      ...manuallyLinkedItems,
-      [selectedSalesItem]: String(selectedOrderGuideItem),
-    };
-
     if (selectedSalesItem && selectedOrderGuideItem) {
       dispatch(
         addLinks({ [selectedSalesItem]: String(selectedOrderGuideItem) })
       );
-      setManuallyLinkedItems(newLinkedList);
     }
   };
   const linkedItemsDisplay =
@@ -102,7 +95,7 @@ export default function LinkPage({ salesDataId }) {
             <FilterSelect
               title={'Unlinked Sales Items'}
               data={unlinkedSalesItemList
-                .filter((item) => !manuallyLinkedItems[item.upc])
+                .filter((item) => !productMap[item.upc])
                 .map((item) => ({
                   display: `${item.upc} ${item.description}`,
                   value: item.upc,
