@@ -9,7 +9,6 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
 import { useTheme } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
-import localForage from 'localforage';
 import SalesSubHeaderCell from './SalesSubHeaderCell';
 import SalesHeaderCell from './SalesHeaderCell';
 import ProductRow from './ProductRow';
