@@ -6,7 +6,7 @@ import ProductTable from 'components/ProductTable/ProductTable';
 import FileLoader from 'components/fileLoader/FileLoader';
 import MockDataLink from 'components/mockDataLink/MockDataLink';
 import { selectFilterText } from 'components/appBar/appBarSlice';
-import { selectDays } from 'reducers/daysSlice';
+import { selectDays } from 'reducers/filtersSlice';
 import { selectProductMap } from 'reducers/productMapSlice';
 
 const useStyles = makeStyles({

@@ -45,6 +45,9 @@ export default function AppDrawer() {
         <ListItem>
           <Link to="links">Items Links</Link>
         </ListItem>
+        <ListItem>
+          <Link to="upload">Load Data</Link>
+        </ListItem>
       </List>
     </SwipeableDrawer>
   );

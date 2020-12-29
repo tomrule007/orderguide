@@ -6,11 +6,12 @@ import AppBar from './components/appBar/AppBar';
 import AppDrawer from './components/appDrawer/AppDrawer';
 import { getOrderGuideData } from './components/ProductTable/orderGuideSlice';
 import { getSavedProductMap } from 'reducers/productMapSlice';
-import { setDays } from './reducers/daysSlice';
+import { setDays } from './reducers/filtersSlice';
 import ProductPage from 'pages/ProductPage';
 import LinkPage from 'pages/LinkPage';
 
 import InstructionalModal from './components/instructionModal/InstructionModal';
+import UploadDataPage from 'pages/UploadDataPage';
 
 const useStyles = makeStyles({
   app: {
@@ -43,6 +44,7 @@ function App() {
       <Router className={classes.body}>
         <ProductPage path="/" />
         <LinkPage path="links/:salesDataId" />
+        <UploadDataPage path="upload" />
       </Router>
     </div>
   );
