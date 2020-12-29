@@ -53,13 +53,16 @@ export const filtersSlice = createSlice({
         };
       });
     },
+    setStore: (state, action) => {
+      state.store.selected = action.payload;
+    },
   },
 });
 
-export const { setDays } = filtersSlice.actions;
+export const { setDays, setStore } = filtersSlice.actions;
 
 export const selectDays = (state) => state.filters.days;
-export const selectStore = (state) => state.filters.store;
+export const selectFilters = (state) => state.filters;
 
 export default filtersSlice.reducer;
 
