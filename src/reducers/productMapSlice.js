@@ -38,7 +38,7 @@ const getSalesDataOrderGuideLinker = (normalizedOrderGuide, productLinkMap) => (
 ) =>
   salesData &&
   Object.entries(salesData)
-    .filter(([upc, salesItem]) => salesItem.totalMovement > 0)
+    //.filter(([upc, salesItem]) => salesItem.totalMovement > 0)
     .reduce(
       (acc, cur) => {
         const [salesUPC, salesItem] = cur;

@@ -1,4 +1,5 @@
 import React, { useMemo, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -13,6 +14,7 @@ import SalesSubHeaderCell from './SalesSubHeaderCell';
 import SalesHeaderCell from './SalesHeaderCell';
 import ProductRow from './ProductRow';
 import { getLinkedSalesData } from 'reducers/productMapSlice';
+import { selectDays, selectFilters } from 'reducers/filtersSlice';
 
 const highlightedText = (highlight, text) => {
   const parts = String(text).split(new RegExp(`(${highlight})`, 'gi'));
@@ -83,9 +85,10 @@ const rowIncludes = (filterText) => (row) => {
     );
 };
 
-export default function ProductTable({ data, filterText, days, productMap }) {
+export default function ProductTable({ data, filterText, productMap }) {
   //TODO: The zillion unnecessary rerenders
   console.count('Table Render');
+  const days = useSelector(selectDays);
   const [page, setPage] = React.useState(0);
   const [display, setDisplay] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);

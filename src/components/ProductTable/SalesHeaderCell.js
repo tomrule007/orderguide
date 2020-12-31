@@ -1,7 +1,7 @@
 import React from 'react';
 import { TableCell, MenuItem, Select } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectDays, selectFilters, setStore } from 'reducers/filtersSlice';
+import { selectFilters, setStore } from 'reducers/filtersSlice';
 
 const SalesHeaderCell = ({ selectValue, selectOnChange }) => {
   const dispatch = useDispatch();
@@ -16,6 +16,7 @@ const SalesHeaderCell = ({ selectValue, selectOnChange }) => {
         <MenuItem value={0}>Units</MenuItem>
         <MenuItem value={1}>Cases</MenuItem>
         <MenuItem value={2}>$</MenuItem>
+        <MenuItem value={3}>Rank</MenuItem>
       </Select>
       {' Store: '}
       <Select value={store.selected} onChange={handleSelectStore}>
