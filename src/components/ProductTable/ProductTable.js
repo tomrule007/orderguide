@@ -14,7 +14,7 @@ import SalesSubHeaderCell from './SalesSubHeaderCell';
 import SalesHeaderCell from './SalesHeaderCell';
 import ProductRow from './ProductRow';
 import { getLinkedSalesData } from 'reducers/productMapSlice';
-import { selectDays, selectFilters } from 'reducers/filtersSlice';
+import { selectFilters } from 'reducers/filtersSlice';
 
 const highlightedText = (highlight, text) => {
   const parts = String(text).split(new RegExp(`(${highlight})`, 'gi'));
@@ -88,7 +88,7 @@ const rowIncludes = (filterText) => (row) => {
 export default function ProductTable({ data, filterText, productMap }) {
   //TODO: The zillion unnecessary rerenders
   console.count('Table Render');
-  const days = useSelector(selectDays);
+  const { days } = useSelector(selectFilters);
   const [page, setPage] = React.useState(0);
   const [display, setDisplay] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);

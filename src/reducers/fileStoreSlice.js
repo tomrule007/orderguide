@@ -90,9 +90,8 @@ export const loadFile = (file) => async (dispatch) => {
 
           default:
             throw Error(`Unidentified excel file`);
-            break;
         }
-
+        break;
       default:
         break;
     }

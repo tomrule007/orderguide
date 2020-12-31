@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { TableCell, Tooltip } from '@material-ui/core';
 import { selectFilters } from 'reducers/filtersSlice';
 
