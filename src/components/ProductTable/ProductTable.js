@@ -15,6 +15,7 @@ import SalesHeaderCell from './SalesHeaderCell';
 import ProductRow from './ProductRow';
 import { getLinkedSalesData } from 'reducers/productMapSlice';
 import { selectFilters } from 'reducers/filtersSlice';
+import { getOrderGuide } from 'reducers/fileStoreSlice';
 
 const highlightedText = (highlight, text) => {
   const parts = String(text).split(new RegExp(`(${highlight})`, 'gi'));
@@ -92,6 +93,7 @@ export default function ProductTable({ data, filterText, productMap }) {
   const [page, setPage] = React.useState(0);
   const [display, setDisplay] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
+  const [orderGuide, setOrderGuide] = useState(null);
   const [dataWithSales, setDataWithSales] = useState([]);
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints.up('md'));
@@ -113,10 +115,16 @@ export default function ProductTable({ data, filterText, productMap }) {
   );
 
   useEffect(() => {
-    getLinkedSalesData(data, productMap, days).then(setDataWithSales);
+    getOrderGuide().then(setOrderGuide);
+    return () => {};
+  }, [setOrderGuide]);
+
+  useEffect(() => {
+    if (days && orderGuide && productMap)
+      getLinkedSalesData(orderGuide, productMap, days).then(setDataWithSales);
 
     return () => {};
-  }, [days, data, productMap]);
+  }, [days, orderGuide, productMap]);
 
   return (
     <>

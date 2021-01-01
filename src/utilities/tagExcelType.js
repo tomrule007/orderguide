@@ -1,6 +1,6 @@
 import allStoresSalesReportTemplate from 'utilities/documentValidationTemplates/allStoresSalesReportTemplate';
 import linkTemplate from 'utilities/documentValidationTemplates/linkTemplate';
-
+import orderGuideTemplate from 'utilities/documentValidationTemplates/orderGuideTemplate';
 // dataMatchesTemplate :: [{}] -> [[]] -> Boolean
 const dataMatchesTemplate = (template, data) =>
   template.every((rowTemplate, indexRowTemplate) =>
@@ -29,7 +29,14 @@ const tagExcelType = (excelDataArray) => {
     dataMatchesTemplate(allStoresSalesReportTemplate, excelDataArray)
   )
     return ['allStoresReport', excelDataArray];
+  // All stores cell sheet
+  if (
+    excelDataArray.length > 1 &&
+    dataMatchesTemplate(orderGuideTemplate, excelDataArray)
+  )
+    return ['orderGuide', excelDataArray];
 
+  console.log('unknown', excelDataArray);
   return ['unknown', excelDataArray];
 };
 

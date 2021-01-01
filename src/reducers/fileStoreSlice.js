@@ -4,6 +4,7 @@ import md5 from 'md5';
 import getExcelData from 'utilities/getExcelData';
 import tagExcelType from 'utilities/tagExcelType';
 import parseAllStoresReport from 'utilities/parseAllStoresReport';
+import parseOrderGuide from 'utilities/parseOrderGuide';
 
 export const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -87,6 +88,16 @@ export const loadFile = (file) => async (dispatch) => {
               })
             );
             break;
+          case 'orderGuide':
+            const parsedOrderGuide = parseOrderGuide(taggedExcelData[1]);
+            await localForage.setItem('orderGuide', parsedOrderGuide);
+            dispatch(
+              updateFile({
+                id: fileMetadata.id,
+                status: `ORDER GUIDE: ${file.lastModified}`,
+              })
+            );
+            break;
 
           default:
             throw Error(`Unidentified excel file`);
@@ -115,3 +126,5 @@ export const deleteFile = (fileId) => async (dispatch) => {
     console.log('DELETE FILE ERROR: -->', error.toString());
   }
 };
+
+export const getOrderGuide = () => localForage.getItem('orderGuide');
