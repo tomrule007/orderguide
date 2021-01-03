@@ -11,6 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Button, Box, Typography } from '@material-ui/core';
 import LinkDataLoader from 'components/linkDataLoader/LinkDataLoader';
 import { exportProductMapFile } from 'reducers/productMapSlice';
+import { selectFilters } from 'reducers/filtersSlice';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
 export default function LinkPage({ salesDataId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
+  const { store } = useSelector(selectFilters);
   const [salesItems, setSalesItems] = useState(null);
   const [orderGuide, setOrderGuide] = useState(null);
   const [unlinkedSalesItemList, setUnlinkedSalesItemList] = useState([]);
@@ -61,7 +63,7 @@ export default function LinkPage({ salesDataId }) {
 
       const soldItems = await localForage.getItem(salesDataId);
       const unlinkedItems = Object.values(soldItems || {})
-        .filter(({ totalMovement }) => totalMovement > 0)
+        .filter(({ totalMovement }) => totalMovement[store.selected] > 0)
         .filter(({ upc }) => !normalizedOrderGuide[upc]);
       setUnlinkedSalesItemList(unlinkedItems);
       setSalesItems(soldItems);
