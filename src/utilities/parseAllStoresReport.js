@@ -5,6 +5,10 @@ const valueToIndexMap = (values) =>
     return indexMap;
   }, {});
 
+const log = (tag, value) => {
+  console.log(tag, value);
+  return value;
+};
 // The 'LNK' prefix is used to denote that multiple UPCs are linked to to one code
 // ex: extra large avocados and 32/40ct avocados are sold under the same large price
 // but each have their own registered UPC
@@ -16,15 +20,22 @@ const labelSalesColumns = (columnLookupMap) => (row) => {
     (columnLookupMap[label] &&
       columnLookupMap[label].map((column) => row[column])) ||
     [];
+
+  const checkDigitUPC = parseInt(
+    removeLNKprefix(getColumns('UPC w/Check Digit')[0]),
+    10
+  );
+
   return {
     brand: getColumns('Brand Name')[0],
     description: getColumns('Description')[0],
     //skipping: UPC
     // Making upc match more closely match orderguide UPCs
-    // using 'Price Link' if it exsits or upc w/ check digit
+    // using 'Price Link' if it exists or upc w/ check digit (removing check digit if less than 7 characters)
     upc: parseInt(
-      getColumns('Price Link')[0] ||
-        removeLNKprefix(getColumns('UPC w/Check Digit')[0]),
+      getColumns('Price Link')[0] || String(checkDigitUPC).length > 6
+        ? checkDigitUPC
+        : String(checkDigitUPC).slice(0, -1),
       10
     ),
     size: getColumns('Size')[0],
