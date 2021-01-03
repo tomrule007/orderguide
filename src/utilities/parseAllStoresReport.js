@@ -5,10 +5,6 @@ const valueToIndexMap = (values) =>
     return indexMap;
   }, {});
 
-const log = (tag, value) => {
-  console.log(tag, value);
-  return value;
-};
 // The 'LNK' prefix is used to denote that multiple UPCs are linked to to one code
 // ex: extra large avocados and 32/40ct avocados are sold under the same large price
 // but each have their own registered UPC

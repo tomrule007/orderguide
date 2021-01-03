@@ -72,7 +72,7 @@ export default function LinkPage({ salesDataId }) {
     attachSalesData();
 
     return () => {};
-  }, [salesDataId, data, productMap]);
+  }, [salesDataId, data, productMap, store]);
 
   const handleLinkOnClick = () => {
     if (selectedSalesItem && selectedOrderGuideItem) {
