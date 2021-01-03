@@ -1,12 +1,17 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from '@reach/router';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-
-import FileLoader from '../fileLoader/FileLoader';
-import SalesLoader from '../salesLoader/SalesLoader';
+import {
+  Box,
+  List,
+  Divider,
+  SwipeableDrawer,
+  Typography,
+} from '@material-ui/core';
+import ListItemLink from 'components/ListItemLink/ListItemLink';
+import AssessmentIcon from '@material-ui/icons/Assessment';
+import AssignmentIcon from '@material-ui/icons/Assignment';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import TimelineIcon from '@material-ui/icons/Timeline';
 
 import { toggleDrawer } from './appDrawerSlice';
 
@@ -32,22 +37,37 @@ export default function AppDrawer() {
       onClose={handleToggleDrawer(false)}
       onOpen={handleToggleDrawer(true)}
     >
-      <List>
-        <ListItem>
-          <FileLoader />
-        </ListItem>
-        <ListItem>
-          <SalesLoader />
-        </ListItem>
-        <ListItem>
-          <Link to="/">OrderGuide</Link>
-        </ListItem>
-        <ListItem>
-          <Link to="links">Items Links</Link>
-        </ListItem>
-        <ListItem>
-          <Link to="upload">Load Data</Link>
-        </ListItem>
+      <Box m={2}>
+        <Typography variant="h6">Retail Insight</Typography>
+        <Typography variant={'caption'}>v0.1</Typography>
+      </Box>
+      <Divider />
+      <List
+        onkeyDown={handleToggleDrawer(false)}
+        onClick={handleToggleDrawer(false)}
+      >
+        <ListItemLink
+          to="/"
+          text={'Sales Dashboard'}
+          icon={<TimelineIcon />}
+        ></ListItemLink>
+        <Divider />
+        <ListItemLink
+          to="orderguide"
+          text={'Order Guide'}
+          icon={<AssignmentIcon />}
+        ></ListItemLink>
+        <ListItemLink
+          to="dailysales"
+          text={'Daily Sales'}
+          icon={<AssessmentIcon />}
+        ></ListItemLink>
+        <Divider />
+        <ListItemLink
+          to="upload"
+          text={'Upload Data'}
+          icon={<CloudUploadIcon />}
+        ></ListItemLink>
       </List>
     </SwipeableDrawer>
   );
