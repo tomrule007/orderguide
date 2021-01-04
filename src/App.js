@@ -12,6 +12,7 @@ import LinkPage from 'pages/LinkPage';
 
 import InstructionalModal from './components/instructionModal/InstructionModal';
 import UploadDataPage from 'pages/UploadDataPage';
+import OrderGuidePage from 'pages/OrderGuidePage';
 
 const useStyles = makeStyles({
   app: {
@@ -45,6 +46,7 @@ function App() {
         <ProductPage path="/" />
         <LinkPage path="links/:salesDataId" />
         <UploadDataPage path="upload" />
+        <OrderGuidePage path="orderguide" />
       </Router>
     </div>
   );

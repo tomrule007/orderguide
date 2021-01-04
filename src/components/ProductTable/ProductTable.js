@@ -17,53 +17,6 @@ import { getLinkedSalesData } from 'reducers/productMapSlice';
 import { selectFilters } from 'reducers/filtersSlice';
 import { getOrderGuide } from 'reducers/fileStoreSlice';
 
-const highlightedText = (highlight, text) => {
-  const parts = String(text).split(new RegExp(`(${highlight})`, 'gi'));
-  return (
-    <>
-      {parts.map((part, i) =>
-        i % 2 === 1 ? (
-          <mark key={i}>{part}</mark>
-        ) : (
-          <React.Fragment key={i}>{part}</React.Fragment>
-        )
-      )}
-    </>
-  );
-};
-
-const toDollars = (filterText, displayText) =>
-  '$'.concat(Number(displayText).toFixed(2));
-const toPercent = (filterText, displayText) => String(displayText).concat('%');
-
-const columns = [
-  { id: 'brand', label: 'Brand', hiddenOnSmall: true },
-  { id: 'upc', label: 'UPC', format: highlightedText },
-  { id: 'description', label: 'Description', format: highlightedText },
-  { id: 'deliveryDays', label: 'Delivery Days', hiddenOnSmall: true },
-
-  {
-    id: 'unitCost',
-    label: 'Unit Cost',
-    format: toDollars,
-    hiddenOnSmall: true,
-  },
-  { id: 'retail', label: 'Retail', format: toDollars },
-  {
-    id: 'grossMargin',
-    label: 'Gross Margin',
-    format: toPercent,
-    hiddenOnSmall: true,
-  },
-
-  {
-    id: 'caseCost',
-    label: 'Case Cost',
-    format: toDollars,
-    hiddenOnSmall: true,
-  },
-];
-
 const useStyles = makeStyles({
   tableBody: {
     flex: '1 1 auto',
@@ -74,19 +27,7 @@ const useStyles = makeStyles({
   },
 });
 
-const rowIncludes = (filterText) => (row) => {
-  const columnsToSearch = ['upc', 'description'];
-
-  return columnsToSearch
-    .map((column) => row[column])
-    .some((value) =>
-      String(value)
-        .toLowerCase()
-        .includes(filterText)
-    );
-};
-
-export default function ProductTable({ data, filterText, productMap }) {
+export default function ProductTable({ columns, data, productMap }) {
   //TODO: The zillion unnecessary rerenders
   console.count('Table Render');
   const { days } = useSelector(selectFilters);
@@ -107,12 +48,6 @@ export default function ProductTable({ data, filterText, productMap }) {
     setPage(0);
   };
   const classes = useStyles();
-
-  const filteredData = useMemo(
-    () =>
-      filterText ? data.filter(rowIncludes(filterText.toLowerCase())) : data,
-    [data, filterText]
-  );
 
   useEffect(() => {
     getOrderGuide().then(setOrderGuide);
@@ -152,7 +87,7 @@ export default function ProductTable({ data, filterText, productMap }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredData
+            {data
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => (
                 <ProductRow
@@ -164,7 +99,6 @@ export default function ProductTable({ data, filterText, productMap }) {
                   setDisplay={setDisplay}
                   dataWithSales={dataWithSales}
                   columns={columns}
-                  filterText={filterText}
                 />
               ))}
           </TableBody>
@@ -174,7 +108,7 @@ export default function ProductTable({ data, filterText, productMap }) {
         className={classes.tableFooter}
         rowsPerPageOptions={[10, 25, 100]}
         component="div"
-        count={filteredData.length}
+        count={data.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onChangePage={handleChangePage}
