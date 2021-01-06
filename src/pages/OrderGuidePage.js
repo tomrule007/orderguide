@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { CircularProgress, Typography } from '@material-ui/core';
 import OrderGuideTable from 'components/OrderguideTable/OrderguideTable';
+import SearchIcon from '@material-ui/icons/Search';
 import FileLoader from 'components/fileLoader/FileLoader';
 import MockDataLink from 'components/mockDataLink/MockDataLink';
 import { selectFilterText } from 'components/appBar/appBarSlice';
@@ -22,6 +23,7 @@ const useStyles = makeStyles({
     alignItems: 'center',
     justifyContent: 'center',
     flex: '1 1 auto',
+    flexDirection: 'column',
   },
 });
 
@@ -86,7 +88,7 @@ const OrderGuidePage = () => {
 
   const filteredData = React.useMemo(
     () =>
-      filterText
+      filterText && orderGuide
         ? orderGuide.filter(rowIncludes(filterText.toLowerCase()))
         : orderGuide,
     [orderGuide, filterText]
@@ -96,17 +98,27 @@ const OrderGuidePage = () => {
     <div className={classes.center}>
       <CircularProgress size="5rem" />
     </div>
-  ) : filteredData.length ? (
-    <>
-      <Typography>
-        {'Date Loaded: '}
-        {new Date(orderGuideMetadata.dateLoaded).toLocaleDateString('en-US')}
-        {' ( Last Modified: '}
-        {new Date(orderGuideMetadata.lastModified).toLocaleDateString('en-US')}
-        {')'}
-      </Typography>
-      <OrderGuideTable data={filteredData} columns={columns} />
-    </>
+  ) : orderGuide.length ? (
+    filteredData.length === 0 ? (
+      <div className={classes.center}>
+        <SearchIcon fontSize="large" />
+        <Typography>No Matching items found</Typography>
+        <Typography variant="caption">Check the filter settings</Typography>
+      </div>
+    ) : (
+      <>
+        <Typography variant="subtitle2">
+          {'Date Loaded: '}
+          {new Date(orderGuideMetadata.dateLoaded).toLocaleDateString('en-US')}
+          {' ( Last Modified: '}
+          {new Date(orderGuideMetadata.lastModified).toLocaleDateString(
+            'en-US'
+          )}
+          {')'}
+        </Typography>
+        <OrderGuideTable data={filteredData} columns={columns} />
+      </>
+    )
   ) : (
     <div className={classes.center}>
       <div>
