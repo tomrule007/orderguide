@@ -1,17 +1,13 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-  Table,
-  TableHead,
-  TableBody,
   TableCell,
   TableRow,
   IconButton,
   Collapse,
+  Typography,
+  Divider,
 } from '@material-ui/core';
-import SalesCell from './SalesCell';
-import SalesHeaderCell from './SalesHeaderCell';
-import SalesSubHeaderCell from './SalesSubHeaderCell';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 
@@ -27,29 +23,16 @@ const useStyles = makeStyles({
 //TODO: Possibly make desktop version only have one row with sales data always visible
 // https://material-ui.com/components/use-media-query/
 const ProductRow = (props) => {
-  const {
-    row,
-    display,
-    setDisplay,
-    days,
-    dataWithSales,
-    isLargeScreen,
-    filterText,
-    columns,
-  } = props;
+  const { row, isLargeScreen, columns } = props;
   const [open, setOpen] = React.useState(false);
   const classes = useStyles();
-
-  const salesHistory = dataWithSales.map((dayData) =>
-    dayData ? dayData[row.upc] : 'n/a'
-  );
 
   return (
     <>
       <TableRow
         hover
         tabIndex={-1}
-        className={classes.noBottomBorder}
+        className={isLargeScreen ? null : classes.noBottomBorder}
         onClick={() => setOpen(!open)}
       >
         {!isLargeScreen && (
@@ -63,51 +46,42 @@ const ProductRow = (props) => {
           const value = row[column.id];
           return !isLargeScreen && column.hiddenOnSmall ? null : (
             <TableCell key={column.id}>
-              {column.format ? column.format(filterText, value) : value}
+              {column.format ? column.format(value) : value}
             </TableCell>
           );
         })}
-        {isLargeScreen &&
-          salesHistory.map((salesData, i) => (
-            <SalesCell salesData={salesData} displayValue={display} key={i} />
-          ))}
       </TableRow>
       {!isLargeScreen && (
         <TableRow hover>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout="auto" unmountOnExit>
-              <p>
-                {' '}
+              <Typography variant="body2">
+                {'Case Retail: '} <b>{`$${row['caseRetail']}`}</b>
+                {'(UPC 5001)'}
+                <br />
+                {`Savings: $${(
+                  row['calculatedPack'] * row['retail'] -
+                  row['caseRetail']
+                ).toFixed(2)}
+                `}
+                <br />
+                {`Calculated Pack Size: ${row['calculatedPack']}`}
+                <Divider />
+                {`Buyer: ${row['buyer']}`}
+                <br />
+                {`Source: ${row['source']}`}
+                <br />
                 {`Brand: ${row['brand']}`}
                 <br />
-                {`Case Retail: $${(row['caseCost'] * 1.25).toFixed(
-                  2
-                )} (UPC 5001)`}
-              </p>
-              <Table size="small" aria-label="purchases">
-                <TableHead>
-                  <SalesHeaderCell
-                    selectValue={display}
-                    selectOnChange={(e) => setDisplay(e.target.value)}
-                  />
-                  <TableRow>
-                    {days.map((day, i) => {
-                      return <SalesSubHeaderCell day={day} key={i} />;
-                    })}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    {salesHistory.map((salesData, i) => (
-                      <SalesCell
-                        salesData={salesData}
-                        displayValue={display}
-                        key={i}
-                      />
-                    ))}
-                  </TableRow>
-                </TableBody>
-              </Table>
+                {`Day: ${row['deliveryDays']}`}
+                <br />
+                {`Unit Cost: $${row['unitCost']}`}
+                <br />
+                {`Gross Margin: ${row['grossMargin']}%`}
+                <br />
+                {`Case Cost: $${row['caseCost']}`}
+                <br />
+              </Typography>
             </Collapse>
           </TableCell>
         </TableRow>

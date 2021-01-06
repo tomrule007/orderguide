@@ -1,15 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import ProductTable from 'components/ProductTable/ProductTable';
+import { CircularProgress, Typography } from '@material-ui/core';
+import OrderGuideTable from 'components/OrderguideTable/OrderguideTable';
 import FileLoader from 'components/fileLoader/FileLoader';
 import MockDataLink from 'components/mockDataLink/MockDataLink';
 import { selectFilterText } from 'components/appBar/appBarSlice';
-import { selectDays } from 'reducers/filtersSlice';
-import { selectProductMap } from 'reducers/productMapSlice';
-import { getOrderGuide } from 'reducers/fileStoreSlice';
-import { toDollars, toPercent, highlightedText } from 'utilities/formatters';
+import {
+  getOrderGuide,
+  selectOrderGuideMetadata,
+} from 'reducers/fileStoreSlice';
+import {
+  toDollars,
+  toPercent,
+  getHighlightedTextFormatter,
+} from 'utilities/formatters';
 
 const useStyles = makeStyles({
   center: {
@@ -20,33 +25,6 @@ const useStyles = makeStyles({
   },
 });
 
-const columns = [
-  { id: 'brand', label: 'Brand', hiddenOnSmall: true },
-  { id: 'upc', label: 'UPC', format: highlightedText },
-  { id: 'description', label: 'Description', format: highlightedText },
-  { id: 'deliveryDays', label: 'Delivery Days', hiddenOnSmall: true },
-
-  {
-    id: 'unitCost',
-    label: 'Unit Cost',
-    format: toDollars,
-    hiddenOnSmall: true,
-  },
-  { id: 'retail', label: 'Retail', format: toDollars },
-  {
-    id: 'grossMargin',
-    label: 'Gross Margin',
-    format: toPercent,
-    hiddenOnSmall: true,
-  },
-
-  {
-    id: 'caseCost',
-    label: 'Case Cost',
-    format: toDollars,
-    hiddenOnSmall: true,
-  },
-];
 const rowIncludes = (filterText) => (row) => {
   const columnsToSearch = ['upc', 'description'];
 
@@ -59,17 +37,53 @@ const rowIncludes = (filterText) => (row) => {
     );
 };
 
-const ProductList = () => {
+const OrderGuidePage = () => {
   const classes = useStyles();
-  const { data } = useSelector((state) => state.orderGuide);
+  const orderGuideMetadata = useSelector(selectOrderGuideMetadata);
   const filterText = useSelector(selectFilterText);
-  const isLoading = useSelector((state) => state.fileLoader.isLoading);
-  const productMap = useSelector(selectProductMap);
-  const [orderGuide, setOrderGuide] = useState([]);
+  const [orderGuide, setOrderGuide] = useState(null);
   useEffect(() => {
     getOrderGuide().then(setOrderGuide);
     return () => {};
   }, [setOrderGuide]);
+
+  const highlightText = useMemo(() => getHighlightedTextFormatter(filterText), [
+    filterText,
+  ]);
+
+  const columns = useMemo(
+    () => [
+      { id: 'source', label: 'Source', hiddenOnSmall: true },
+      { id: 'buyer', label: 'Buyer', hiddenOnSmall: true },
+      { id: 'brand', label: 'Brand', hiddenOnSmall: true },
+      { id: 'upc', label: 'UPC', format: highlightText },
+      { id: 'description', label: 'Description', format: highlightText },
+      { id: 'deliveryDays', label: 'Delivery Days', hiddenOnSmall: true },
+
+      {
+        id: 'unitCost',
+        label: 'Unit Cost',
+        format: toDollars,
+        hiddenOnSmall: true,
+      },
+      { id: 'retail', label: 'Retail', format: toDollars },
+      {
+        id: 'grossMargin',
+        label: 'Gross Margin',
+        format: toPercent,
+        hiddenOnSmall: true,
+      },
+
+      {
+        id: 'caseCost',
+        label: 'Case Cost',
+        format: toDollars,
+        hiddenOnSmall: true,
+      },
+    ],
+    [highlightText]
+  );
+
   const filteredData = React.useMemo(
     () =>
       filterText
@@ -78,17 +92,21 @@ const ProductList = () => {
     [orderGuide, filterText]
   );
 
-  return isLoading ? (
+  return !orderGuide ? (
     <div className={classes.center}>
       <CircularProgress size="5rem" />
     </div>
-  ) : data.length ? (
-    <ProductTable
-      productMap={productMap}
-      data={filteredData}
-      filterText={filterText}
-      columns={columns}
-    />
+  ) : filteredData.length ? (
+    <>
+      <Typography>
+        {'Date Loaded: '}
+        {new Date(orderGuideMetadata.dateLoaded).toLocaleDateString('en-US')}
+        {' ( Last Modified: '}
+        {new Date(orderGuideMetadata.lastModified).toLocaleDateString('en-US')}
+        {')'}
+      </Typography>
+      <OrderGuideTable data={filteredData} columns={columns} />
+    </>
   ) : (
     <div className={classes.center}>
       <div>
@@ -99,4 +117,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default OrderGuidePage;
