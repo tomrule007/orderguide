@@ -16,9 +16,17 @@ export const fileStoreSlice = createSlice({
   initialState: {
     files: {},
     salesDataFiles: {},
-    orderGuideFiles: {},
+    orderGuideMetadata: {
+      id: null,
+      lastModified: null,
+      uploadDate: null,
+    },
   },
   reducers: {
+    updateOrderGuideMetadata: (state, action) => {
+      console.log('SETTING ACTION', action.payload);
+      state.orderGuideMetadata = action.payload;
+    },
     addFile: (state, action) => {
       state.files[action.payload.id] = action.payload;
     },
@@ -35,8 +43,15 @@ export const fileStoreSlice = createSlice({
   },
 });
 
-export const { addFile, updateFile, removeFile } = fileStoreSlice.actions;
+export const {
+  addFile,
+  updateFile,
+  removeFile,
+  updateOrderGuideMetadata,
+} = fileStoreSlice.actions;
 export const selectFileStore = (state) => state.fileStore.files;
+export const selectOrderGuideMetadata = (state) =>
+  state.fileStore.orderGuideMetadata;
 
 export default fileStoreSlice.reducer;
 export const getBlob = (id) => localForage.getItem(id);
@@ -81,20 +96,32 @@ export const loadFile = (file) => async (dispatch) => {
             const { date, data } = parsedAllStoresReport;
             console.log(parsedAllStoresReport);
             await localForage.setItem(date, data);
+
+            // Update Raw File Reference
             dispatch(
               updateFile({
                 id: fileMetadata.id,
                 status: `All Stores Sales Report: ${date}`,
               })
             );
+            // TODO: create dispatch action to add file to saleDataFiles (bettername? ParsedData? )
             break;
           case 'orderGuide':
             const parsedOrderGuide = parseOrderGuide(taggedExcelData[1]);
             await localForage.setItem('orderGuide', parsedOrderGuide);
+            // Update Raw File Reference
             dispatch(
               updateFile({
                 id: fileMetadata.id,
                 status: `ORDER GUIDE: ${file.lastModified}`,
+              })
+            );
+            // Update OrderGuide Metadata (currently only support one file)
+            dispatch(
+              updateOrderGuideMetadata({
+                id: fileMetadata.id,
+                lastModified: fileMetadata.lastModified,
+                dateLoaded: fileMetadata.dateLoaded,
               })
             );
             break;
