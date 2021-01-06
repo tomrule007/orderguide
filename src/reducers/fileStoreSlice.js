@@ -19,7 +19,7 @@ export const fileStoreSlice = createSlice({
     orderGuideMetadata: {
       id: null,
       lastModified: null,
-      uploadDate: null,
+      dateLoaded: null,
     },
   },
   reducers: {
