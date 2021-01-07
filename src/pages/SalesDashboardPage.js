@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -8,7 +8,10 @@ import MockDataLink from 'components/mockDataLink/MockDataLink';
 import { selectFilterText } from 'components/appBar/appBarSlice';
 import { selectDays } from 'reducers/filtersSlice';
 import { selectProductMap } from 'reducers/productMapSlice';
-
+import {
+  getOrderGuide,
+  selectOrderGuideMetadata,
+} from 'reducers/fileStoreSlice';
 const useStyles = makeStyles({
   center: {
     display: 'flex',
@@ -23,22 +26,35 @@ const useStyles = makeStyles({
     flexDirection: 'column',
   },
 });
-
-const ProductList = () => {
+// Todo: Fix half done refactor.
+//       -> Product table should only get data passed in via props
+//       -> Remove unused data processing code
+const SalesDashboardPage = () => {
   const classes = useStyles();
-  const { data } = useSelector((state) => state.orderGuide);
   const filterText = useSelector(selectFilterText);
-  const isLoading = useSelector((state) => state.fileLoader.isLoading);
   const days = useSelector(selectDays);
   const productMap = useSelector(selectProductMap);
+  // TODO: copied code from OrderGuidePage (could possibly be extracted to custom hook)
+  const orderGuideMetadata = useSelector(selectOrderGuideMetadata);
+  const [orderGuide, setOrderGuide] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    if (!isLoading) setIsLoading(true);
+    getOrderGuide().then((guide) => {
+      setOrderGuide(guide);
+      setIsLoading(false);
+    });
+    return () => {};
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderGuideMetadata]);
   return isLoading ? (
     <div className={classes.center}>
       <CircularProgress size="5rem" />
     </div>
-  ) : data.length ? (
+  ) : orderGuide.length ? (
     <ProductTable
       productMap={productMap}
-      data={data}
+      data={orderGuide}
       filterText={filterText}
       days={days}
     />
@@ -52,4 +68,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default SalesDashboardPage;
