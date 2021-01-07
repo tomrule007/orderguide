@@ -37,7 +37,7 @@ export default function AppDrawer() {
       onClose={handleToggleDrawer(false)}
       onOpen={handleToggleDrawer(true)}
     >
-      <Box m={2}>
+      <Box m={1}>
         <Typography variant="h6">Retail Insight</Typography>
         <Typography variant={'caption'}>v0.1</Typography>
       </Box>
