@@ -57,10 +57,7 @@ export default function AppDrawer() {
         <Typography variant={'caption'}>v0.1</Typography>
       </Box>
       <Divider />
-      <List
-        onkeyDown={handleToggleDrawer(false)}
-        onClick={handleToggleDrawer(false)}
-      >
+      <List onClick={handleToggleDrawer(false)}>
         <ListItemLink
           to="salesDashboard"
           text={'Sales Dashboard'}
