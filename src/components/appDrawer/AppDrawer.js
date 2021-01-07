@@ -25,6 +25,7 @@ const deleteAllDataAndReload = () => {
     'Do you really want to delete all loaded data?'
   );
   if (deleteForSure) {
+    localStorage.clear();
     localForage.clear().then(() => window.location.reload());
   }
 };
