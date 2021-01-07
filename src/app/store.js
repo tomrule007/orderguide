@@ -36,6 +36,7 @@ const persistConfig = {
   key: 'root',
   version: 1,
   storage: localForage,
+  blacklist: ['appDrawer', 'appBar'],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
