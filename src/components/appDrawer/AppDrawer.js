@@ -1,8 +1,12 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import localForage from 'localforage';
 import {
   Box,
   List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
   Divider,
   SwipeableDrawer,
   Typography,
@@ -11,9 +15,19 @@ import ListItemLink from 'components/ListItemLink/ListItemLink';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import TimelineIcon from '@material-ui/icons/Timeline';
 
 import { toggleDrawer } from './appDrawerSlice';
+
+const deleteAllDataAndReload = () => {
+  const deleteForSure = window.confirm(
+    'Do you really want to delete all loaded data?'
+  );
+  if (deleteForSure) {
+    localForage.clear().then(() => window.location.reload());
+  }
+};
 
 export default function AppDrawer() {
   const dispatch = useDispatch();
@@ -68,6 +82,13 @@ export default function AppDrawer() {
           text={'Upload Data'}
           icon={<CloudUploadIcon />}
         ></ListItemLink>
+        <Divider />
+        <ListItem button onClick={deleteAllDataAndReload}>
+          <ListItemIcon>
+            <DeleteForeverIcon />
+          </ListItemIcon>
+          <ListItemText primary="Delete All Data" />
+        </ListItem>
       </List>
     </SwipeableDrawer>
   );
