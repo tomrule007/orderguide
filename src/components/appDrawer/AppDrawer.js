@@ -62,7 +62,7 @@ export default function AppDrawer() {
         onClick={handleToggleDrawer(false)}
       >
         <ListItemLink
-          to="/"
+          to="salesDashboard"
           text={'Sales Dashboard'}
           icon={<TimelineIcon />}
         ></ListItemLink>

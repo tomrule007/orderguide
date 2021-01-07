@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Router } from '@reach/router';
+import { Router, Redirect } from '@reach/router';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from './components/appBar/AppBar';
 import AppDrawer from './components/appDrawer/AppDrawer';
@@ -43,7 +43,8 @@ function App() {
       <AppBar />
       <InstructionalModal />
       <Router className={classes.body}>
-        <ProductPage path="/" />
+        <Redirect from="/" to="orderguide" />
+        <ProductPage path="/salesDashboard" />
         <LinkPage path="links/:salesDataId" />
         <UploadDataPage path="upload" />
         <OrderGuidePage path="orderguide" />
