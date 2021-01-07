@@ -45,9 +45,13 @@ const OrderGuidePage = () => {
   const orderGuideMetadata = useSelector(selectOrderGuideMetadata);
   const filterText = useSelector(selectFilterText);
   const [orderGuide, setOrderGuide] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [showOldGuideAlert, setShowOldGuideAlert] = useState(false);
   useEffect(() => {
-    getOrderGuide().then(setOrderGuide);
+    getOrderGuide().then((guide) => {
+      setOrderGuide(guide);
+      setIsLoading(false);
+    });
     return () => {};
   }, [setOrderGuide]);
 
@@ -126,11 +130,12 @@ const OrderGuidePage = () => {
 
     setShowOldGuideAlert(false);
   };
-  return !orderGuide ? (
+
+  return isLoading ? (
     <div className={classes.center}>
       <CircularProgress size="5rem" />
     </div>
-  ) : orderGuide.length ? (
+  ) : orderGuide && orderGuide.length ? (
     <>
       <Snackbar
         open={showOldGuideAlert}
