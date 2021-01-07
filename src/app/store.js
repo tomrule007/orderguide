@@ -6,12 +6,12 @@ import {
 import localForage from 'localforage';
 import {
   persistReducer,
-  FLUSH,
-  REHYDRATE,
-  PAUSE,
-  PERSIST,
-  PURGE,
-  REGISTER,
+  // FLUSH,
+  // REHYDRATE,
+  // PAUSE,
+  // PERSIST,
+  // PURGE,
+  // REGISTER,
 } from 'redux-persist';
 
 import orderGuideReducer from 'components/ProductTable/orderGuideSlice';
@@ -44,8 +44,12 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 export default configureStore({
   reducer: persistedReducer,
   middleware: getDefaultMiddleware({
-    serializableCheck: {
-      ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-    },
+    // Speed up development hot reloading (could cause bugs to slip by though)
+    immutableCheck: false,
+    serializableCheck: false,
+    // Ignore just the non serializable redux-persist actions
+    // serializableCheck: {
+    //   ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+    // },
   }),
 });
