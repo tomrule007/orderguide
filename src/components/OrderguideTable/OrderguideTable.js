@@ -20,11 +20,10 @@ const useStyles = makeStyles({
     flex: '0 0 auto',
   },
 });
-
-export default function ProductTable({ columns, data }) {
+// TODO: Switch to react-table hooks and move mainHeader to columns object
+export default function ProductTable({ columns, data, mainHeader }) {
   //TODO: The zillion unnecessary rerenders
   console.count('Table Render');
-  console.log({ data, columns });
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(25);
   const classes = useStyles();
@@ -40,6 +39,10 @@ export default function ProductTable({ columns, data }) {
     setPage(0);
   };
 
+  // Add one to account for expansion icon column
+  const columnsVisibleOnSmallCount =
+    columns.filter(({ hiddenOnSmall }) => !hiddenOnSmall).length + 1;
+
   // Todo: determine if this is actually necessary (does it improve performance?)
   const dataPage = React.useMemo(
     () => data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
@@ -53,10 +56,12 @@ export default function ProductTable({ columns, data }) {
           <TableHead>
             <TableRow>
               <TableCell
-                align="right"
-                colSpan={(isLargeScreen ? 0 : 1) + columns.length}
+                align="left"
+                colSpan={
+                  isLargeScreen ? columns.length : columnsVisibleOnSmallCount
+                }
               >
-                Edit
+                {mainHeader}
               </TableCell>
             </TableRow>
             <TableRow>
