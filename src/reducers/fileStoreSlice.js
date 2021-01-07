@@ -79,7 +79,9 @@ export const loadFile = (file) => async (dispatch) => {
     if (!SUPPORTED_FILE_TYPES.some((type) => file.type === type))
       throw Error(`UNSUPPORTED FILE TYPE --> ${file.type || 'UNKNOWN'}`);
 
-    const fileBuffer = await file.arrayBuffer();
+    const fileBuffer = file.arrayBuffer
+      ? await file.arrayBuffer()
+      : file.mockData;
     // TODO: use md5 hash to check for duplicate data or prevent uploads of same data.
     const hash = md5(fileBuffer);
 

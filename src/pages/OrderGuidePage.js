@@ -48,12 +48,14 @@ const OrderGuidePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showOldGuideAlert, setShowOldGuideAlert] = useState(false);
   useEffect(() => {
+    if (!isLoading) setIsLoading(true);
     getOrderGuide().then((guide) => {
       setOrderGuide(guide);
       setIsLoading(false);
     });
     return () => {};
-  }, [setOrderGuide]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderGuideMetadata]);
 
   // Show Alert if loaded order guide is older than weekly monday release.
   useEffect(() => {

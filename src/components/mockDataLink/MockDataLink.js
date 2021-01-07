@@ -3,8 +3,8 @@ import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Link from '@material-ui/core/Link';
 
-import { loadFile } from '../fileLoader/fileLoaderSlice';
-import { mockData } from './mockData';
+import { loadFile } from 'reducers/fileStoreSlice';
+import { mockOrderGuideFile } from './mockOrderGuideFile';
 
 const useStyles = makeStyles({
   container: {
@@ -17,13 +17,13 @@ function MockDataLink() {
   const dispatch = useDispatch();
 
   const loadMockData = () => {
-    dispatch(loadFile(mockData));
+    dispatch(loadFile(mockOrderGuideFile));
   };
   const classes = useStyles();
   return (
     <div className={classes.container}>
       <Link component="button" variant="subtitle1" onClick={loadMockData}>
-        (Load mock data)
+        (Load mock data *Missing some fields)
       </Link>
     </div>
   );
