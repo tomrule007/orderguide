@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { addDays, WEEKDAYS } from 'utilities/date';
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const STORES = [
   '1 RALEIGH HILLS',
   '2 SELLWOOD',
@@ -65,10 +65,3 @@ export const selectDays = (state) => state.filters.days;
 export const selectFilters = (state) => state.filters;
 
 export default filtersSlice.reducer;
-
-// Date Utilities
-function addDays(date, days) {
-  const newDate = new Date(Number(date));
-  newDate.setDate(date.getDate() + days);
-  return newDate;
-}

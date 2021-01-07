@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { CircularProgress, Typography } from '@material-ui/core';
+import { CircularProgress, Snackbar, Typography } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import OrderGuideTable from 'components/OrderguideTable/OrderguideTable';
 import SearchIcon from '@material-ui/icons/Search';
 import FileLoader from 'components/fileLoader/FileLoader';
@@ -16,7 +17,7 @@ import {
   toPercent,
   getHighlightedTextFormatter,
 } from 'utilities/formatters';
-
+import { getRecentDay } from 'utilities/date';
 const useStyles = makeStyles({
   center: {
     display: 'flex',
@@ -44,10 +45,25 @@ const OrderGuidePage = () => {
   const orderGuideMetadata = useSelector(selectOrderGuideMetadata);
   const filterText = useSelector(selectFilterText);
   const [orderGuide, setOrderGuide] = useState(null);
+  const [showOldGuideAlert, setShowOldGuideAlert] = useState(false);
   useEffect(() => {
     getOrderGuide().then(setOrderGuide);
     return () => {};
   }, [setOrderGuide]);
+
+  // Show Alert if loaded order guide is older than weekly monday release.
+  useEffect(() => {
+    const { lastModified } = orderGuideMetadata;
+    // Do not run if no order guide is loaded
+    if (!lastModified) return;
+
+    const lastReleaseDate = getRecentDay(1, new Date());
+
+    if (lastReleaseDate > lastModified) {
+      setShowOldGuideAlert(true);
+    }
+    return () => {};
+  }, [orderGuideMetadata]);
 
   const highlightText = useMemo(() => getHighlightedTextFormatter(filterText), [
     filterText,
@@ -85,6 +101,15 @@ const OrderGuidePage = () => {
     ],
     [highlightText]
   );
+  const OrderGuideDates = () => (
+    <Typography variant="subtitle2">
+      {'Date Loaded: '}
+      {new Date(orderGuideMetadata.dateLoaded).toLocaleDateString('en-US')}
+      {' ( Created: '}
+      {new Date(orderGuideMetadata.lastModified).toLocaleDateString('en-US')}
+      {')'}
+    </Typography>
+  );
 
   const filteredData = React.useMemo(
     () =>
@@ -94,31 +119,49 @@ const OrderGuidePage = () => {
     [orderGuide, filterText]
   );
 
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setShowOldGuideAlert(false);
+  };
   return !orderGuide ? (
     <div className={classes.center}>
       <CircularProgress size="5rem" />
     </div>
   ) : orderGuide.length ? (
-    filteredData.length === 0 ? (
-      <div className={classes.center}>
-        <SearchIcon fontSize="large" />
-        <Typography>No Matching items found</Typography>
-        <Typography variant="caption">Check the filter settings</Typography>
-      </div>
-    ) : (
-      <>
-        <Typography variant="subtitle2">
-          {'Date Loaded: '}
-          {new Date(orderGuideMetadata.dateLoaded).toLocaleDateString('en-US')}
-          {' ( Last Modified: '}
-          {new Date(orderGuideMetadata.lastModified).toLocaleDateString(
-            'en-US'
-          )}
-          {')'}
-        </Typography>
-        <OrderGuideTable data={filteredData} columns={columns} />
-      </>
-    )
+    <>
+      <Snackbar
+        open={showOldGuideAlert}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert
+          elevation={6}
+          variant="filled"
+          onClose={handleClose}
+          severity="warning"
+        >
+          Order Guide is out of date
+        </Alert>
+      </Snackbar>
+      {filteredData.length === 0 ? (
+        <div className={classes.center}>
+          <SearchIcon fontSize="large" />
+          <Typography>No Matching items found</Typography>
+          <Typography variant="caption">Check the filter settings</Typography>
+        </div>
+      ) : (
+        <>
+          <OrderGuideTable
+            data={filteredData}
+            columns={columns}
+            mainHeader={<OrderGuideDates />}
+          />
+        </>
+      )}
+    </>
   ) : (
     <div className={classes.center}>
       <div>
