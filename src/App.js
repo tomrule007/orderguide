@@ -7,7 +7,7 @@ import AppDrawer from './components/appDrawer/AppDrawer';
 import { getOrderGuideData } from './components/ProductTable/orderGuideSlice';
 import { getSavedProductMap } from 'reducers/productMapSlice';
 import { setDays } from './reducers/filtersSlice';
-import ProductPage from 'pages/ProductPage';
+import SalesDashboardPage from 'pages/SalesDashboardPage';
 import LinkPage from 'pages/LinkPage';
 
 import InstructionalModal from './components/instructionModal/InstructionModal';
@@ -44,7 +44,7 @@ function App() {
       <InstructionalModal />
       <Router className={classes.body}>
         <Redirect from="/" to="orderguide" />
-        <ProductPage path="/salesDashboard" />
+        <SalesDashboardPage path="/salesDashboard" />
         <LinkPage path="links/:salesDataId" />
         <UploadDataPage path="upload" />
         <OrderGuidePage path="orderguide" />

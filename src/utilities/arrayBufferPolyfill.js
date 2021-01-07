@@ -2,7 +2,6 @@
 (function() {
   File.prototype.arrayBuffer = File.prototype.arrayBuffer || myArrayBuffer;
   Blob.prototype.arrayBuffer = Blob.prototype.arrayBuffer || myArrayBuffer;
-  console.log('Polyfill Arraybuffer loaded');
   function myArrayBuffer() {
     // this: File or Blob
     return new Promise((resolve) => {
