@@ -8,6 +8,7 @@ import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
+import { Match } from '@reach/router';
 
 import { toggleDrawer } from '../appDrawer/appDrawerSlice';
 import { setFilterText, selectFilterText } from './appBarSlice';
@@ -68,6 +69,11 @@ const useStyles = makeStyles((theme) => ({
   offset: theme.mixins.toolbar,
 }));
 
+const pathnameToPageTitleMap = {
+  '/salesDashboard': 'Sales Dashboard',
+  '/orderguide': 'Order Guide',
+  '/dailysales': 'Daily Sales',
+};
 export default function MyAppBar() {
   const dispatch = useDispatch();
   const filterText = useSelector(selectFilterText);
@@ -87,7 +93,11 @@ export default function MyAppBar() {
             <MenuIcon />
           </IconButton>
           <Typography className={classes.title} variant="h6" noWrap>
-            OrderGuide
+            <Match path="/">
+              {({ location }) =>
+                pathnameToPageTitleMap[location.pathname] || 'Retail Insight'
+              }
+            </Match>
           </Typography>
           <div className={classes.search}>
             <div className={classes.searchIcon}>
