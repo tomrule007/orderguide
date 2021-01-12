@@ -48,7 +48,7 @@ function App() {
       <Router className={classes.body}>
         <Redirect from="/" to="orderguide" noThrow />
         <SalesDashboardPage path="/salesDashboard" />
-        <LinkPage path="links/:salesDataId" />
+        <LinkPage path="/salesDashboard/links/:salesDataId" />
         <UploadDataPage path="upload" />
         <OrderGuidePage path="orderguide" />
         <SalesDatePickerPage path="dailysales">

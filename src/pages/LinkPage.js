@@ -12,6 +12,7 @@ import { Button, Box, Typography } from '@material-ui/core';
 import LinkDataLoader from 'components/linkDataLoader/LinkDataLoader';
 import { exportProductMapFile } from 'reducers/productMapSlice';
 import { selectFilters } from 'reducers/filtersSlice';
+import { getOrderGuide } from 'reducers/fileStoreSlice';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -42,37 +43,48 @@ export default function LinkPage({ salesDataId }) {
   const classes = useStyles();
   const { store } = useSelector(selectFilters);
   const [salesItems, setSalesItems] = useState(null);
-  const [orderGuide, setOrderGuide] = useState(null);
+  const [orderGuide, setOrderGuide] = useState([]);
   const [unlinkedSalesItemList, setUnlinkedSalesItemList] = useState([]);
   const [selectedSalesItem, setSelectedSalesItem] = useState(null);
   const [selectedOrderGuideItem, setSelectedOrderGuideItem] = useState(null);
   const [selectedLinkedItem, setSelectedLinkedItem] = useState(null);
-
-  const { data } = useSelector((state) => state.orderGuide);
+  console.log({ salesItems, orderGuide });
+  console.log('GOGO');
+  // const { data } = useSelector((state) => state.orderGuide);
   const productMap = useSelector(selectProductMap);
 
   useEffect(() => {
+    getOrderGuide().then((guide) => {
+      console.log('new guide:', guide);
+      setOrderGuide(guide);
+    });
+    return () => {};
+  }, [setOrderGuide]);
+  useEffect(() => {
+    if (!salesDataId || !orderGuide || !productMap || !store) return;
     if (Object.keys(productMap).length !== 0) {
       localStorage.setItem('links', JSON.stringify(productMap));
     }
-    if (data.length === 0) return; // do not run if orderguide is empty
-    const attachSalesData = async () => {
-      const normalizedOrderGuide = Object.fromEntries(
-        data.map((item) => [item.upc, item])
-      );
 
+    const attachSalesData = async () => {
       const soldItems = await localForage.getItem(salesDataId);
+      console.log('soldItems', soldItems, 'orderGuide');
       const unlinkedItems = Object.values(soldItems || {})
         .filter(({ totalMovement }) => totalMovement[store.selected] > 0)
-        .filter(({ upc }) => !normalizedOrderGuide[upc]);
+        .filter(({ upc }) => !orderGuide.hasOwnProperty(upc));
+
       setUnlinkedSalesItemList(unlinkedItems);
       setSalesItems(soldItems);
-      setOrderGuide(normalizedOrderGuide);
     };
-    attachSalesData();
+    if (orderGuide.length === 0) {
+      console.log('empty guide');
+      return;
+    } else {
+      attachSalesData();
+    }
 
     return () => {};
-  }, [salesDataId, data, productMap, store]);
+  }, [salesDataId, orderGuide, productMap, store]);
 
   const handleLinkOnClick = () => {
     if (selectedSalesItem && selectedOrderGuideItem) {
@@ -101,7 +113,7 @@ export default function LinkPage({ salesDataId }) {
         flexWrap="wrap"
       >
         <Box m={2}>
-          {data.length && (
+          {orderGuide.length && (
             <FilterSelect
               title={'Unlinked Sales Items'}
               data={unlinkedSalesItemList
@@ -122,11 +134,11 @@ export default function LinkPage({ salesDataId }) {
           <br />
           <Typography variant="caption">select two items to link</Typography>
         </Box>
-        {data.length && (
+        {orderGuide.length && (
           <Box m={2}>
             <FilterSelect
               title={'OrderGuide'}
-              data={data.map((item) => ({
+              data={orderGuide.map((item) => ({
                 display: `${item.upc} ${item.description}`,
                 value: item.upc,
               }))}
@@ -136,7 +148,7 @@ export default function LinkPage({ salesDataId }) {
           </Box>
         )}
       </Box>
-      {data.length && (
+      {orderGuide.length && (
         <Box
           m={2}
           display="flex"
@@ -170,7 +182,6 @@ export default function LinkPage({ salesDataId }) {
           </Box>
         </Box>
       )}
-      <div></div>
     </div>
   );
 }
