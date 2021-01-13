@@ -157,3 +157,4 @@ export const deleteFile = (fileId) => async (dispatch) => {
 };
 
 export const getOrderGuide = () => localForage.getItem('orderGuide');
+export const getSalesData = (id) => localForage.getItem(id);
