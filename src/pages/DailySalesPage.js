@@ -5,24 +5,21 @@ import {
   Typography,
 } from '@material-ui/core';
 import React, { useEffect, useMemo, useState } from 'react';
-import {
-  getHighlightedTextFormatter,
-  toDollars,
-  toPercent,
-} from 'utilities/formatters';
-import {
-  getOrderGuide,
-  getSalesData,
-  selectOrderGuideMetadata,
-} from 'reducers/fileStoreSlice';
 import { selectFilters, setStore } from 'reducers/filtersSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 import FileLoader from 'components/fileLoader/FileLoader';
 import MockDataLink from 'components/mockDataLink/MockDataLink';
 import ReactTable from 'components/ReactTable/ReactTable';
+import {
+  getSalesData,
+} from 'reducers/fileStoreSlice';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectFilterText } from 'components/appBar/appBarSlice';
+import {selectSettings} from 'reducers/settingsSlice'
+import {
+  toDollars,
+} from 'utilities/formatters';
 
 const useStyles = makeStyles({
   center: {
@@ -45,6 +42,10 @@ const cellToYesNo = ({ value }) => (value ? 'Y' : 'N');
 const cellToUPCString = ({ value }) =>
   value.replace(/(.+)(.{5})(.{5})(.)$/g, '$1-$2-$3-$4');
 
+// IMPORTANT! This constant is used to persist ReactTable settings.
+//            Using this id allows the component to be reusable.
+const TABLE_ID = 'dailySalesTable'
+
 // Todo: Fix half done refactor.
 //       -> Product table should only get data passed in via props
 //       -> Remove unused data processing code
@@ -52,6 +53,7 @@ const SalesDashboardPage = ({ salesDataId }) => {
   const classes = useStyles();
   const filterText = useSelector(selectFilterText);
   const { store } = useSelector(selectFilters);
+  const settings = useSelector(selectSettings);
   const [salesData, setSalesData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
@@ -67,6 +69,13 @@ const SalesDashboardPage = ({ salesDataId }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [salesDataId]);
 
+  const tableSettings = settings.table[TABLE_ID]
+  const initialState = useMemo(
+    () => ({
+      hiddenColumns: tableSettings || [],
+    }),
+    [tableSettings]
+  );
   const columns = useMemo(
     () => [
       { accessor: 'brand', Header: 'Brand' },
@@ -96,7 +105,7 @@ const SalesDashboardPage = ({ salesDataId }) => {
       { accessor: `salesDollars.${store.selected}`, Header: 'Sales Dollars' },
       { accessor: `storeRank.${store.selected}`, Header: 'Store Rank' },
     ],
-    []
+    [store]
   );
 
   // Todo: Should Move this logic to sales data upload processing to only be done once
@@ -131,7 +140,13 @@ const SalesDashboardPage = ({ salesDataId }) => {
       <Typography variant="h4" align="center">
         {toDollars(dailyTotal)}
       </Typography>
-      <ReactTable data={salesData} columns={columns} skipPageReset={true} />
+      <ReactTable
+        data={salesData}
+        columns={columns}
+        skipPageReset={true}
+        tableId={TABLE_ID}
+        initialState={initialState}
+      />
     </>
   ) : (
     <div className={classes.center}>

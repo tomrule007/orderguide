@@ -18,7 +18,7 @@ import PropTypes from 'prop-types';
 import TablePaginationActions from './TablePaginationActions';
 import TableSettingsModal from './TableSettingsModal';
 
-const ReactTable = ({ columns, data }) => {
+const ReactTable = ({ columns, data, initialState, tableId }) => {
   const {
     getTableProps,
     headerGroups,
@@ -34,6 +34,7 @@ const ReactTable = ({ columns, data }) => {
     {
       columns,
       data,
+      initialState,
     },
     useSortBy,
     usePagination
@@ -61,11 +62,12 @@ const ReactTable = ({ columns, data }) => {
         onClose={() => setSettingsModalOpen(false)}
         getToggleHideAllColumnsProps={getToggleHideAllColumnsProps}
         allColumns={allColumns}
+        tableId={tableId}
       />
 
       <TableContainer>
         <Table {...getTableProps()}>
-          <TableHead fixed>
+          <TableHead>
             {headerGroups.map((headerGroup) => (
               <TableRow {...headerGroup.getHeaderGroupProps()}>
                 {headerGroup.headers.map((column) => (
@@ -136,6 +138,8 @@ const ReactTable = ({ columns, data }) => {
 ReactTable.propTypes = {
   columns: PropTypes.array.isRequired,
   data: PropTypes.array.isRequired,
+  tableId: PropTypes.string.isRequired,
+  initalState: PropTypes.object,
 };
 
 export default ReactTable;
