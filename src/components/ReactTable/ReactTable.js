@@ -5,20 +5,31 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableFooter,
   TableHead,
   TablePagination,
   TableRow,
   TableSortLabel,
+  makeStyles
 } from '@material-ui/core';
 import React, { useState } from 'react';
 import { usePagination, useSortBy, useTable } from 'react-table';
 
 import PropTypes from 'prop-types';
-import TablePaginationActions from './TablePaginationActions';
 import TableSettingsModal from './TableSettingsModal';
 
+const useStyles = makeStyles({
+  tableContainer: {
+    flex: '1 1 auto',
+    overflow: 'auto',
+  },
+  tableFooter: {
+    flex: '0 0 auto',
+  },
+});
+
 const ReactTable = ({ columns, data, initialState, tableId }) => {
+  const classes = useStyles();
+console.log({initialState})
   const {
     getTableProps,
     headerGroups,
@@ -65,8 +76,8 @@ const ReactTable = ({ columns, data, initialState, tableId }) => {
         tableId={tableId}
       />
 
-      <TableContainer>
-        <Table {...getTableProps()}>
+      <TableContainer className={classes.tableContainer}>
+        <Table stickyHeader  size="small" {...getTableProps()}>
           <TableHead>
             {headerGroups.map((headerGroup) => (
               <TableRow {...headerGroup.getHeaderGroupProps()}>
@@ -105,32 +116,22 @@ const ReactTable = ({ columns, data, initialState, tableId }) => {
               );
             })}
           </TableBody>
-
-          <TableFooter>
-            <TableRow>
-              <TablePagination
+        </Table>
+      </TableContainer> 
+      <TablePagination
+              className={classes.tableFooter}
                 rowsPerPageOptions={[
                   5,
                   10,
                   25,
                   { label: 'All', value: data.length },
                 ]}
-                colSpan={3}
                 count={data.length}
                 rowsPerPage={pageSize}
                 page={pageIndex}
-                SelectProps={{
-                  inputProps: { 'aria-label': 'rows per page' },
-                  native: true,
-                }}
                 onChangePage={handleChangePage}
                 onChangeRowsPerPage={handleChangeRowsPerPage}
-                ActionsComponent={TablePaginationActions}
               />
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </TableContainer>
     </>
   );
 };
