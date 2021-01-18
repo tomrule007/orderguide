@@ -10,6 +10,7 @@ import {
   useMediaQuery,
 } from '@material-ui/core';
 import React, { useEffect, useMemo, useState } from 'react';
+import { dateWithDayString, salesIdToDate } from 'utilities/date';
 import { selectFilters, setStore } from 'reducers/filtersSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -204,13 +205,53 @@ const SalesDashboardPage = ({ salesDataId }) => {
       };
     }, {});
 
+    const sortedTotalsByCategory = Object.entries(totalsByCategory).sort(
+      (a, b) =>
+        b[1].salesDollars[store.selected] - a[1].salesDollars[store.selected]
+    );
+    const [categories, totals] = unzipBinary(sortedTotalsByCategory);
     return {
-      categories: Object.keys(totalsByCategory),
-      totals: Object.values(totalsByCategory),
+      categories,
+      totals,
     };
-  }, [salesData]);
+  }, [salesData, store]);
 
-  console.log({ minorCatagoriesAndTotals });
+  // Category Sales Chart Data
+
+  const { options, series } = useMemo(() => {
+    if (!minorCatagoriesAndTotals) return { options: null, series: null };
+
+    return {
+      options: {
+        chart: {
+          id: 'basic-bar',
+          events: {
+            dataPointSelection: function(event, chartContext, config) {
+              // TODO: Clicking category sets path to category and show drilled down view
+              //      --> table filter to category
+              //      --> Chart show top 10 items in category
+              // console.log('Clicked', { event, chartContext, config });
+            },
+          },
+        },
+        xaxis: {
+          categories: minorCatagoriesAndTotals.categories.slice(0, 10),
+        },
+      },
+      series: [
+        {
+          name: 'Sales $',
+          data: minorCatagoriesAndTotals.totals
+            .slice(0, 10)
+            .map(({ salesDollars }) =>
+              Number(salesDollars[store.selected].toFixed(2))
+            ),
+        },
+      ],
+    };
+  }, [minorCatagoriesAndTotals, store]);
+
+  const salesDataDate = salesIdToDate(salesDataId);
 
   return (
     <>
@@ -232,6 +273,10 @@ const SalesDashboardPage = ({ salesDataId }) => {
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={3}>
               <Paper className={classes.paper}>
+                <Typography variant="h5">
+                  {dateWithDayString(salesDataDate)}
+                </Typography>
+                <br />
                 <Select value={store.selected} onChange={handleSelectStore}>
                   {store.list.map((name, index) => (
                     <MenuItem key={index} value={index}>
@@ -259,8 +304,13 @@ const SalesDashboardPage = ({ salesDataId }) => {
               </Paper>
             </Grid>
             <Grid item xs={12} lg={9}>
-              <Paper className={classes.paper}>
-                <ChartCard />
+              <Paper className={classes.paper} style={{ height: 400 }}>
+                <ChartCard
+                  title="Top 10 Sales Catagories By Store"
+                  type="bar"
+                  options={options}
+                  series={series}
+                />
               </Paper>
             </Grid>
             <Grid item xs={12}>

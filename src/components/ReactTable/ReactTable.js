@@ -9,7 +9,7 @@ import {
   TablePagination,
   TableRow,
   TableSortLabel,
-  makeStyles
+  makeStyles,
 } from '@material-ui/core';
 import React, { useState } from 'react';
 import { usePagination, useSortBy, useTable } from 'react-table';
@@ -29,7 +29,6 @@ const useStyles = makeStyles({
 
 const ReactTable = ({ columns, data, initialState, tableId }) => {
   const classes = useStyles();
-console.log({initialState})
   const {
     getTableProps,
     headerGroups,
@@ -77,7 +76,7 @@ console.log({initialState})
       />
 
       <TableContainer className={classes.tableContainer}>
-        <Table stickyHeader  size="small" {...getTableProps()}>
+        <Table stickyHeader size="small" {...getTableProps()}>
           <TableHead>
             {headerGroups.map((headerGroup) => (
               <TableRow {...headerGroup.getHeaderGroupProps()}>
@@ -117,21 +116,16 @@ console.log({initialState})
             })}
           </TableBody>
         </Table>
-      </TableContainer> 
+      </TableContainer>
       <TablePagination
-              className={classes.tableFooter}
-                rowsPerPageOptions={[
-                  5,
-                  10,
-                  25,
-                  { label: 'All', value: data.length },
-                ]}
-                count={data.length}
-                rowsPerPage={pageSize}
-                page={pageIndex}
-                onChangePage={handleChangePage}
-                onChangeRowsPerPage={handleChangeRowsPerPage}
-              />
+        className={classes.tableFooter}
+        rowsPerPageOptions={[5, 10, 25, { label: 'All', value: data.length }]}
+        count={data.length}
+        rowsPerPage={pageSize}
+        page={pageIndex}
+        onChangePage={handleChangePage}
+        onChangeRowsPerPage={handleChangeRowsPerPage}
+      />
     </>
   );
 };

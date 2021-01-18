@@ -36,3 +36,17 @@ export const getRecentDay = (weekDay, fromDate) => {
     ? addDays(date, daysToWeekday)
     : addDays(date, -7 + daysToWeekday);
 };
+
+export const salesIdToDate = (salesId) => {
+  const [year, month, day] = salesId.split('_').map(Number);
+
+  return new Date(year, month - 1, day);
+};
+
+export const dateWithDayString = (date) =>
+  date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
