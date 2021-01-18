@@ -2,7 +2,7 @@ import React from 'react';
 
 // Cell display formatters :: String -> String || React.Node
 export const toDollars = (displayText) =>
-  '$'.concat(Number(displayText).toFixed(2));
+  '$'.concat(Number(Number(displayText).toFixed(2)).toLocaleString('en'));
 export const toPercent = (displayText) => String(displayText).concat('%');
 
 export const getHighlightedTextFormatter = (highlight) => {
