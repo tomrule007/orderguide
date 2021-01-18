@@ -1,3 +1,6 @@
+const twoDecimal = (input) => {
+  return Number(Number(input).toFixed(2));
+};
 // Used to convert the header row cell values into an index lookup map  ie. 'Brand Name' -> [0]
 const valueToIndexMap = (values) =>
   values.reduce((indexMap, value, index) => {
@@ -22,12 +25,17 @@ const labelSalesColumns = (columnLookupMap) => (row) => {
     10
   );
 
+  const pack = getColumns('Pack')[0];
+  const totalMovement = getColumns('Total Movement');
   return {
     brand: getColumns('Brand Name')[0],
     description: getColumns('Description')[0],
     //skipping: UPC
     // Making upc match more closely match orderguide UPCs
     // using 'Price Link' if it exists or upc w/ check digit (removing check digit if less than 7 characters)
+    upcWithCheckDigit: getColumns('UPC w/Check Digit')[0],
+    priceLink: getColumns('Price Link')[0],
+
     upc: parseInt(
       getColumns('Price Link')[0] || String(checkDigitUPC).length > 6
         ? checkDigitUPC
@@ -35,22 +43,24 @@ const labelSalesColumns = (columnLookupMap) => (row) => {
       10
     ),
     size: getColumns('Size')[0],
-    pack: getColumns('Pack')[0],
+    pack,
     reportRank: getColumns('Report Rank')[0],
     //Skipping: Current Cost, Current Reg Retail
-    currentRetail: getColumns('Current Retail')[0],
+    currentRetail: twoDecimal(getColumns('Current Retail')[0]),
     onSale:
       getColumns('Current Retail')[0] !== getColumns('Current Reg Retail')[0],
-    currentCaseCost: getColumns('CurrentCaseCost')[0],
-    minorCatagoryName: getColumns('Minor Catg Name')[0],
+    currentCaseCost: twoDecimal(getColumns('CurrentCaseCost')[0]),
+    majorCategoryName: getColumns('Major Catg Name')[0],
+    minorCategoryName: getColumns('Minor Catg Name')[0],
     isOrganic: getColumns('Organic')[0] === 'Y',
     //skipping: Vendor Name, 'UPC w/Check Digit'
     priceLinkName: getColumns('Price Link Name')[0],
     vendorName: getColumns('Vendor Name')[0],
-    totalMovement: getColumns('Total Movement'),
+    totalMovement,
     salesDollars: getColumns('Sales $'),
-    // Calculated Column
-    storeRank: getColumns('Total Movement')
+    // Calculated Columns
+    totalCases: totalMovement.map((units) => twoDecimal(units / pack)),
+    storeRank: totalMovement
       .slice(0, -1) // Remove grand total
       .map((movement, index) => [movement, index]) // Tag movement with index which corresponds to store lookup map
       .sort(([a], [b]) => b - a) // sort in descending order
@@ -71,9 +81,8 @@ const normalizeByUPCReducer = (acc, item) => {
 
 const parseAllStoresReport = ([tag, excelDataArray]) => {
   const columnLookupMap = valueToIndexMap(excelDataArray[3]);
-  console.log({ columnLookupMap });
   // Example Input: '12/21/2020 to 12/21/2020'  desired output: YYYY_MM_DD
-  const date = excelDataArray[1][16].replace(
+  const date = excelDataArray[1][17].replace(
     /^(\d+)\/(\d+)\/(\d+).+/g,
     '$3_$1_$2'
   );
