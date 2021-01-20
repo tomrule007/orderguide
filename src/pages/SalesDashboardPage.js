@@ -13,6 +13,7 @@ import { selectDays } from 'reducers/filtersSlice';
 import { selectFilterText } from 'components/appBar/appBarSlice';
 import { selectProductMap } from 'reducers/productMapSlice';
 import { useSelector } from 'react-redux';
+
 const useStyles = makeStyles({
   center: {
     display: 'flex',
@@ -52,7 +53,7 @@ const SalesDashboardPage = () => {
     <div className={classes.center}>
       <CircularProgress size="5rem" />
     </div>
-  ) : orderGuide.length ? (
+  ) : orderGuide && orderGuide.length ? (
     <ProductTable
       productMap={productMap}
       data={orderGuide}
