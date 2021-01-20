@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
+import getExcelData from 'utilities/getExcelData';
 import localForage from 'localforage';
 import md5 from 'md5';
-import getExcelData from 'utilities/getExcelData';
-import tagExcelType from 'utilities/tagExcelType';
 import parseAllStoresReport from 'utilities/parseAllStoresReport';
 import parseOrderGuide from 'utilities/parseOrderGuide';
+import tagExcelType from 'utilities/tagExcelType';
 
 export const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -23,6 +23,9 @@ export const fileStoreSlice = createSlice({
     },
   },
   reducers: {
+    addSalesDataRef: (state, action) => {
+      state.salesDataFiles[action.payload.date] = action.payload;
+    },
     updateOrderGuideMetadata: (state, action) => {
       console.log('SETTING ACTION', action.payload);
       state.orderGuideMetadata = action.payload;
@@ -48,12 +51,17 @@ export const {
   updateFile,
   removeFile,
   updateOrderGuideMetadata,
+  addSalesDataRef,
 } = fileStoreSlice.actions;
+
 export const selectFileStore = (state) => state.fileStore.files;
+export const selectSalesDataFiles = (state) => state.fileStore.salesDataFiles;
+
 export const selectOrderGuideMetadata = (state) =>
   state.fileStore.orderGuideMetadata;
 
 export default fileStoreSlice.reducer;
+
 export const getBlob = (id) => localForage.getItem(id);
 
 export const loadFile = (file) => async (dispatch) => {
@@ -98,6 +106,9 @@ export const loadFile = (file) => async (dispatch) => {
             const { date, data } = parsedAllStoresReport;
             console.log(parsedAllStoresReport);
             await localForage.setItem(date, data);
+
+            // TODO: Decide if I want to store any extra parsed meta data here.
+            dispatch(addSalesDataRef({ date }));
 
             // Update Raw File Reference
             dispatch(
@@ -157,3 +168,4 @@ export const deleteFile = (fileId) => async (dispatch) => {
 };
 
 export const getOrderGuide = () => localForage.getItem('orderGuide');
+export const getSalesData = (id) => localForage.getItem(id);

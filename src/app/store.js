@@ -1,26 +1,19 @@
 import {
+  combineReducers,
   configureStore,
   getDefaultMiddleware,
-  combineReducers,
 } from '@reduxjs/toolkit';
-import localForage from 'localforage';
-import {
-  persistReducer,
-  // FLUSH,
-  // REHYDRATE,
-  // PAUSE,
-  // PERSIST,
-  // PURGE,
-  // REGISTER,
-} from 'redux-persist';
 
-import orderGuideReducer from 'components/ProductTable/orderGuideSlice';
-import fileLoaderReducer from 'components/fileLoader/fileLoaderSlice';
-import appDrawerReducer from 'components/appDrawer/appDrawerSlice';
 import appBarReducer from 'components/appBar/appBarSlice';
-import filtersReducer from 'reducers/filtersSlice';
-import productMapReducer from 'reducers/productMapSlice';
+import appDrawerReducer from 'components/appDrawer/appDrawerSlice';
+import fileLoaderReducer from 'components/fileLoader/fileLoaderSlice';
 import fileStoreReducer from 'reducers/fileStoreSlice';
+import filtersReducer from 'reducers/filtersSlice';
+import localForage from 'localforage';
+import orderGuideReducer from 'components/ProductTable/orderGuideSlice';
+import { persistReducer } from 'redux-persist';
+import productMapReducer from 'reducers/productMapSlice';
+import settingsReducer from 'reducers/settingsSlice';
 
 const rootReducer = combineReducers({
   orderGuide: orderGuideReducer,
@@ -30,6 +23,7 @@ const rootReducer = combineReducers({
   filters: filtersReducer,
   productMap: productMapReducer,
   fileStore: fileStoreReducer,
+  settings: settingsReducer,
 });
 
 const persistConfig = {
