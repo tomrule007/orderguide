@@ -43,6 +43,17 @@ export const salesIdToDate = (salesId) => {
   return new Date(year, month - 1, day);
 };
 
+// TODO: UPDATE FILE STORE TO USE THIS FUNCTION
+//       Need to make sure all id's are formatted the same
+export const dateToSalesId = (date) => {
+  const theDate = safeDate(date);
+  const day = theDate.getDate();
+  const month = theDate.getMonth() + 1;
+  const year = theDate.getFullYear();
+
+  return `${year}_${month}_${day}`;
+};
+
 export const dateWithDayString = (date) =>
   date.toLocaleDateString('en-US', {
     weekday: 'long',
