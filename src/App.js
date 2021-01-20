@@ -1,19 +1,21 @@
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { Router, Redirect } from '@reach/router';
-import { makeStyles } from '@material-ui/core/styles';
+import { Redirect, Router } from '@reach/router';
+
 import AppBar from './components/appBar/AppBar';
 import AppDrawer from './components/appDrawer/AppDrawer';
+import DailySalesPage from 'pages/DailySalesPage';
+import InstructionalModal from './components/instructionModal/InstructionModal';
+import LinkPage from 'pages/LinkPage';
+import OrderGuidePage from 'pages/OrderGuidePage';
+import SalesDashboardPage from 'pages/SalesDashboardPage';
+import SalesDatePickerPage from 'pages/SalesDatePickerPage';
+import SalesYearDataCalendar from 'components/SalesYearDataCalendar/SalesYearDataCalendar';
+import UploadDataPage from 'pages/UploadDataPage';
 import { getOrderGuideData } from './components/ProductTable/orderGuideSlice';
 import { getSavedProductMap } from 'reducers/productMapSlice';
+import { makeStyles } from '@material-ui/core/styles';
 import { setDays } from './reducers/filtersSlice';
-import SalesDashboardPage from 'pages/SalesDashboardPage';
-import LinkPage from 'pages/LinkPage';
-
-import InstructionalModal from './components/instructionModal/InstructionModal';
-import UploadDataPage from 'pages/UploadDataPage';
-import OrderGuidePage from 'pages/OrderGuidePage';
-import DailySalesPage from 'pages/DailySalesPage';
+import { useDispatch } from 'react-redux';
 
 const useStyles = makeStyles({
   app: {
@@ -49,7 +51,10 @@ function App() {
         <LinkPage path="links/:salesDataId" />
         <UploadDataPage path="upload" />
         <OrderGuidePage path="orderguide" />
-        <DailySalesPage path="dailysales/:salesDataId" />
+        <SalesDatePickerPage path="dailysales">
+          <SalesYearDataCalendar default />
+          <DailySalesPage path=":salesDataId" />
+        </SalesDatePickerPage>
       </Router>
     </div>
   );
