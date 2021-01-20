@@ -46,7 +46,7 @@ function App() {
       <AppBar />
       <InstructionalModal />
       <Router className={classes.body}>
-        <Redirect from="/" to="orderguide" />
+        <Redirect from="/" to="orderguide" noThrow />
         <SalesDashboardPage path="/salesDashboard" />
         <LinkPage path="links/:salesDataId" />
         <UploadDataPage path="upload" />
