@@ -110,9 +110,6 @@ export default function ProductTable({ data, filterText, productMap }) {
   const classes = useStyles();
 
   const filteredData = useMemo(() => {
-    const filteredData = filterText
-      ? data.filter(rowIncludes(filterText.toLowerCase()))
-      : data;
     const unlinkedItem = {
       brand: 'N/A',
       buyer: 'N/A',
@@ -127,7 +124,13 @@ export default function ProductTable({ data, filterText, productMap }) {
       upc: 'unlinked',
       description: 'All unlinked items',
     };
-    return [unlinkedItem, ...filteredData];
+    const dataWithUnlinkedItem = [unlinkedItem, ...data];
+
+    const filteredData = filterText
+      ? dataWithUnlinkedItem.filter(rowIncludes(filterText.toLowerCase()))
+      : dataWithUnlinkedItem;
+
+    return filteredData;
   }, [data, filterText]);
 
   useEffect(() => {
