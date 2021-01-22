@@ -1,24 +1,25 @@
+import { Box, Button, Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import {
-  selectProductMap,
   addLinks,
+  exportProductMapFile,
+  getLinkedSalesData,
   removeLink,
+  selectProductMap,
 } from 'reducers/productMapSlice';
-import localForage from 'localforage';
+import { useDispatch, useSelector } from 'react-redux';
+
 import FilterSelect from 'components/FilterSelect/FilterSelect';
-import { makeStyles } from '@material-ui/core/styles';
-import { Button, Box, Typography } from '@material-ui/core';
 import LinkDataLoader from 'components/linkDataLoader/LinkDataLoader';
-import { exportProductMapFile } from 'reducers/productMapSlice';
-import { selectFilters } from 'reducers/filtersSlice';
 import { getOrderGuide } from 'reducers/fileStoreSlice';
+import localForage from 'localforage';
+import { makeStyles } from '@material-ui/core/styles';
+import { selectFilters } from 'reducers/filtersSlice';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flex: '1 1 auto',
     overflow: 'auto',
-    border: '5px solid purple',
   },
   horizontal: {
     display: 'flex',
@@ -48,14 +49,11 @@ export default function LinkPage({ salesDataId }) {
   const [selectedSalesItem, setSelectedSalesItem] = useState(null);
   const [selectedOrderGuideItem, setSelectedOrderGuideItem] = useState(null);
   const [selectedLinkedItem, setSelectedLinkedItem] = useState(null);
-  console.log({ salesItems, orderGuide });
-  console.log('GOGO');
   // const { data } = useSelector((state) => state.orderGuide);
   const productMap = useSelector(selectProductMap);
 
   useEffect(() => {
     getOrderGuide().then((guide) => {
-      console.log('new guide:', guide);
       setOrderGuide(guide);
     });
     return () => {};
@@ -67,17 +65,19 @@ export default function LinkPage({ salesDataId }) {
     }
 
     const attachSalesData = async () => {
+      const [{ unlinked }] = await getLinkedSalesData(orderGuide, productMap, [
+        { dateString: salesDataId },
+      ]);
       const soldItems = await localForage.getItem(salesDataId);
-      console.log('soldItems', soldItems, 'orderGuide');
-      const unlinkedItems = Object.values(soldItems || {})
-        .filter(({ totalMovement }) => totalMovement[store.selected] > 0)
-        .filter(({ upc }) => !orderGuide.hasOwnProperty(upc));
 
-      setUnlinkedSalesItemList(unlinkedItems);
+      setUnlinkedSalesItemList(
+        unlinked.filter(
+          ({ totalMovement }) => totalMovement[store.selected] > 0
+        )
+      );
       setSalesItems(soldItems);
     };
     if (orderGuide.length === 0) {
-      console.log('empty guide');
       return;
     } else {
       attachSalesData();
@@ -118,10 +118,41 @@ export default function LinkPage({ salesDataId }) {
               title={'Unlinked Sales Items'}
               data={unlinkedSalesItemList
                 .filter((item) => !productMap[item.upc])
-                .map((item) => ({
-                  display: `${item.upc} ${item.description}`,
-                  value: item.upc,
-                }))}
+                .map((item) => {
+                  const {
+                    description,
+                    currentRetail,
+                    onSale,
+                    pack,
+                    size,
+                    totalMovement,
+                    salesDollars,
+                    upc,
+                  } = item;
+                  return {
+                    display: `${upc} ${description}`,
+                    getTooltip: () => (
+                      <p>
+                        <u>{description}</u>
+                        <br />
+                        <b>{'Retail $'}</b> {currentRetail.toFixed(2)}{' '}
+                        {onSale && <b> {'ONSALE!!'}</b>}
+                        <br />
+                        <b>{'Pack: '}</b>
+                        {pack} <b>{' x '}</b> {size}
+                        <br />
+                        <b>{'Units Sold: '}</b> {totalMovement[store.selected]}
+                        <br />
+                        <b>{'Cases Sold: '}</b>{' '}
+                        {(totalMovement[store.selected] / pack).toFixed(1)}
+                        <br />
+                        <b>{'Total Income  $'}</b>{' '}
+                        {salesDollars[store.selected]}
+                      </p>
+                    ),
+                    value: item.upc,
+                  };
+                })}
               selectedValue={selectedSalesItem}
               onSelect={setSelectedSalesItem}
             />
