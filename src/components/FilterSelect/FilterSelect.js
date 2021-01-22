@@ -1,10 +1,12 @@
+import { ListItem, ListItemText } from '@material-ui/core';
+import { Paper, Tooltip, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
+import { fade, makeStyles } from '@material-ui/core/styles';
+
+import InputBase from '@material-ui/core/InputBase';
 import { FixedSizeList as List } from 'react-window';
 import SearchIcon from '@material-ui/icons/Search';
-import InputBase from '@material-ui/core/InputBase';
-import { Paper, Typography } from '@material-ui/core';
-import { ListItem, ListItemText } from '@material-ui/core';
-import { fade, makeStyles } from '@material-ui/core/styles';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'inline-block',
@@ -63,17 +65,31 @@ const FilterSelect = ({ title, data, onSelect, selectedValue, width }) => {
     display.toLowerCase().includes(filterText)
   );
 
-  const Item = ({ data, index, style }) => (
-    <ListItem
-      style={style}
-      key={data[index].value}
-      button
-      selected={data[index].value === selectedValue}
-      onClick={() => onSelect(data[index].value)}
-    >
-      <ListItemText primary={data[index].display} />
-    </ListItem>
-  );
+  const Item = ({ data, index, style }) => {
+    return data[index].getTooltip ? (
+      <Tooltip title={data[index].getTooltip()}>
+        <ListItem
+          style={style}
+          key={data[index].value}
+          button
+          selected={data[index].value === selectedValue}
+          onClick={() => onSelect(data[index].value)}
+        >
+          <ListItemText primary={data[index].display} />
+        </ListItem>
+      </Tooltip>
+    ) : (
+      <ListItem
+        style={style}
+        key={data[index].value}
+        button
+        selected={data[index].value === selectedValue}
+        onClick={() => onSelect(data[index].value)}
+      >
+        <ListItemText primary={data[index].display} />
+      </ListItem>
+    );
+  };
 
   return (
     <Paper className={classes.root} elevation={3}>
