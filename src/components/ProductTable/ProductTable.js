@@ -1,6 +1,8 @@
-import React, { useMemo, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useEffect, useMemo, useState } from 'react';
+
+import ProductRow from './ProductRow';
+import SalesHeaderCell from './SalesHeaderCell';
+import SalesSubHeaderCell from './SalesSubHeaderCell';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -8,14 +10,13 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TablePagination from '@material-ui/core/TablePagination';
 import TableRow from '@material-ui/core/TableRow';
-import { useTheme } from '@material-ui/core/styles';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
-import SalesSubHeaderCell from './SalesSubHeaderCell';
-import SalesHeaderCell from './SalesHeaderCell';
-import ProductRow from './ProductRow';
 import { getLinkedSalesData } from 'reducers/productMapSlice';
-import { selectFilters } from 'reducers/filtersSlice';
 import { getOrderGuide } from 'reducers/fileStoreSlice';
+import { makeStyles } from '@material-ui/core/styles';
+import { selectFilters } from 'reducers/filtersSlice';
+import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { useSelector } from 'react-redux';
+import { useTheme } from '@material-ui/core/styles';
 
 const highlightedText = (highlight, text) => {
   const parts = String(text).split(new RegExp(`(${highlight})`, 'gi'));
@@ -108,11 +109,26 @@ export default function ProductTable({ data, filterText, productMap }) {
   };
   const classes = useStyles();
 
-  const filteredData = useMemo(
-    () =>
-      filterText ? data.filter(rowIncludes(filterText.toLowerCase())) : data,
-    [data, filterText]
-  );
+  const filteredData = useMemo(() => {
+    const filteredData = filterText
+      ? data.filter(rowIncludes(filterText.toLowerCase()))
+      : data;
+    const unlinkedItem = {
+      brand: 'N/A',
+      buyer: 'N/A',
+      calculatedPack: 'N/A',
+      caseCost: 0,
+      caseRetail: 0,
+      deliveryDays: 'N/A',
+      grossMargin: 0,
+      retail: 0,
+      source: 'N/A',
+      unitCost: 0,
+      upc: 'unlinked',
+      description: 'All unlinked items',
+    };
+    return [unlinkedItem, ...filteredData];
+  }, [data, filterText]);
 
   useEffect(() => {
     getOrderGuide().then(setOrderGuide);

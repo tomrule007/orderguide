@@ -1,6 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
-import localForage from 'localforage';
 import XLSX from 'xlsx';
+import { createSlice } from '@reduxjs/toolkit';
+import { getSalesData } from 'reducers/fileStoreSlice';
 
 export const productMapSlice = createSlice({
   name: 'productMap',
@@ -37,35 +37,48 @@ const getSalesDataOrderGuideLinker = (normalizedOrderGuide, productLinkMap) => (
   salesData
 ) =>
   salesData &&
-  Object.entries(salesData)
+  Object.values(salesData)
     //.filter(([upc, salesItem]) => salesItem.totalMovement > 0)
-    .reduce(
-      (acc, cur) => {
-        const [salesUPC, salesItem] = cur;
-        // TODO: Determine if this is the right business decision.
-        //       This setup will allow users to override matching products
-        //       using there link before checking if the product already has a match.
-        const lookupUPC = productLinkMap[salesUPC] || salesUPC;
-        const orderGuideItemMatch = normalizedOrderGuide[lookupUPC];
-        const alreadyAddedItems = acc[lookupUPC] || [];
-        return {
-          ...acc,
-          ...(orderGuideItemMatch
-            ? { [lookupUPC]: [...alreadyAddedItems, salesItem] }
-            : { unlinked: [...acc.unlinked, [lookupUPC, salesItem]] }),
-        };
-      },
-      { unlinked: [] }
-    );
+    .reduce((acc, item) => {
+      const { priceLink, productCode, upc } = item;
+      let matchUPC = 'unlinked';
+      const productLinkCode = productLinkMap[upc];
+
+      // Tries to match sales data item to order guide item
+      // -> defaults to 'unlinked' if no matches are found
+      // -> Tries to match in this order:
+      //    1) productLinkMapCode (allows users to over ride matches)
+      //    2) upc
+      //    3) priceLink
+      //    4) productCode
+      // * This might not be the appropriate bushiness decision
+
+      if (normalizedOrderGuide[productLinkCode]) {
+        matchUPC = productLinkCode;
+      } else if (normalizedOrderGuide[upc]) {
+        matchUPC = upc;
+      } else if (normalizedOrderGuide[priceLink]) {
+        matchUPC = priceLink;
+      } else if (normalizedOrderGuide[productCode]) {
+        matchUPC = productCode;
+      }
+
+      const alreadyAddedItems = acc[matchUPC] || [];
+
+      return {
+        ...acc,
+        [matchUPC]: [...alreadyAddedItems, item],
+      };
+    }, {});
+
 export const getLinkedSalesData = async (orderGuide, productMap, days) => {
   const salesHistory = await Promise.all(
-    days.map((day) => localForage.getItem(day.dateString))
+    days.map(({ dateString }) => getSalesData(dateString))
   );
 
   const normalizedOrderGuide = Object.fromEntries(
     orderGuide.map((item) => [item.upc, item])
   );
-
   const salesDataOrderGuideLinker = getSalesDataOrderGuideLinker(
     normalizedOrderGuide,
     productMap
@@ -74,7 +87,7 @@ export const getLinkedSalesData = async (orderGuide, productMap, days) => {
   const linkedSalesHistory = salesHistory.map((salesData) =>
     salesDataOrderGuideLinker(salesData)
   );
-  console.log('im linky', linkedSalesHistory);
+
   return linkedSalesHistory;
 };
 

@@ -1,5 +1,6 @@
+import { WEEKDAYS, addDays, dateToSalesId } from 'utilities/date';
+
 import { createSlice } from '@reduxjs/toolkit';
-import { addDays, WEEKDAYS } from 'utilities/date';
 
 const STORES = [
   '1 RALEIGH HILLS',
@@ -43,12 +44,7 @@ export const filtersSlice = createSlice({
       state.days = [-7, -6, -5, -4, -3, -2, -1].map((daysAgo) => {
         const date = addDays(today, daysAgo);
         return {
-          dateString:
-            String(date.getFullYear()) +
-            '_' +
-            String(date.getMonth() + 1).padStart(2, '0') +
-            '_' +
-            String(date.getDate()).padStart(2, '0'),
+          dateString: dateToSalesId(date),
           dayOfWeek: WEEKDAYS[date.getDay()],
         };
       });
