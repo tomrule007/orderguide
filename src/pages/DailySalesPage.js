@@ -127,7 +127,7 @@ const SalesDashboardPage = ({ salesDataId, navigate }) => {
       },
       { accessor: 'onSale', Header: 'On Sale', Cell: cellToYesNo },
       { accessor: 'currentCaseCost', Header: 'Case Cost', Cell: cellToDollars },
-      { accessor: 'minorCatagoryName', Header: 'Minor Category Name' },
+      { accessor: 'minorCategoryName', Header: 'Minor Category Name' },
       { accessor: 'isOrganic', Header: 'Organic', Cell: cellToYesNo },
       { accessor: 'priceLink', Header: 'Price Link' },
 
