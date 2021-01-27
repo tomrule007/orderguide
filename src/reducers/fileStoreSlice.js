@@ -6,6 +6,7 @@ import parseAllStoresReport from 'utilities/parseAllStoresReport';
 import parseOrderGuide from 'utilities/parseOrderGuide';
 import tagExcelType from 'utilities/tagExcelType';
 
+export const UNKNOWN_TYPE = 'UNKNOWN';
 export const EXCEL_TYPE =
   'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 const SUPPORTED_FILE_TYPES = [EXCEL_TYPE];
@@ -85,7 +86,7 @@ export const loadFile = (file) => async (dispatch) => {
       );
     console.log(file.type);
     if (!SUPPORTED_FILE_TYPES.some((type) => file.type === type))
-      throw Error(`UNSUPPORTED FILE TYPE --> ${file.type || 'UNKNOWN'}`);
+      throw Error(`UNSUPPORTED FILE TYPE --> ${file.type || UNKNOWN_TYPE}`);
 
     const fileBuffer = file.arrayBuffer
       ? await file.arrayBuffer()

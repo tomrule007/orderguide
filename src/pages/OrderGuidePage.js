@@ -1,23 +1,24 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
-import { CircularProgress, Snackbar, Typography } from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
-import OrderGuideTable from 'components/OrderguideTable/OrderguideTable';
-import SearchIcon from '@material-ui/icons/Search';
-import FileLoader from 'components/fileLoader/FileLoader';
-import MockDataLink from 'components/mockDataLink/MockDataLink';
-import { selectFilterText } from 'components/appBar/appBarSlice';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Snackbar, Typography } from '@material-ui/core';
+import {
+  getHighlightedTextFormatter,
+  toDollars,
+  toPercent,
+} from 'utilities/formatters';
 import {
   getOrderGuide,
   selectOrderGuideMetadata,
 } from 'reducers/fileStoreSlice';
-import {
-  toDollars,
-  toPercent,
-  getHighlightedTextFormatter,
-} from 'utilities/formatters';
+
+import Alert from '@material-ui/lab/Alert';
+import CenterLoadingSpinner from 'components/CenterLoadingSpinner/CenterLoadingSpinner';
+import OrderGuideTable from 'components/OrderguideTable/OrderguideTable';
+import SearchIcon from '@material-ui/icons/Search';
 import { getRecentDay } from 'utilities/date';
+import { makeStyles } from '@material-ui/core/styles';
+import { selectFilterText } from 'components/appBar/appBarSlice';
+import { useSelector } from 'react-redux';
+
 const useStyles = makeStyles({
   center: {
     display: 'flex',
@@ -40,7 +41,7 @@ const rowIncludes = (filterText) => (row) => {
     );
 };
 
-const OrderGuidePage = () => {
+const OrderGuidePage = ({ navigate }) => {
   const classes = useStyles();
   const orderGuideMetadata = useSelector(selectOrderGuideMetadata);
   const filterText = useSelector(selectFilterText);
@@ -133,49 +134,52 @@ const OrderGuidePage = () => {
     setShowOldGuideAlert(false);
   };
 
-  return isLoading ? (
-    <div className={classes.center}>
-      <CircularProgress size="5rem" />
-    </div>
-  ) : orderGuide && orderGuide.length ? (
+  if (!isLoading && !orderGuide) {
+    navigate('/missingData');
+  }
+
+  return (
     <>
-      <Snackbar
-        open={showOldGuideAlert}
-        autoHideDuration={6000}
-        onClose={handleClose}
-      >
-        <Alert
-          elevation={6}
-          variant="filled"
-          onClose={handleClose}
-          severity="warning"
-        >
-          Order Guide is out of date
-        </Alert>
-      </Snackbar>
-      {filteredData.length === 0 ? (
-        <div className={classes.center}>
-          <SearchIcon fontSize="large" />
-          <Typography>No Matching items found</Typography>
-          <Typography variant="caption">Check the filter settings</Typography>
-        </div>
-      ) : (
+      {/* Loading */}
+      {isLoading && <CenterLoadingSpinner />}
+
+      {/* Order Guide */}
+      {orderGuide && orderGuide.length && (
         <>
-          <OrderGuideTable
-            data={filteredData}
-            columns={columns}
-            mainHeader={<OrderGuideDates />}
-          />
+          <Snackbar
+            open={showOldGuideAlert}
+            autoHideDuration={6000}
+            onClose={handleClose}
+          >
+            <Alert
+              elevation={6}
+              variant="filled"
+              onClose={handleClose}
+              severity="warning"
+            >
+              Order Guide is out of date
+            </Alert>
+          </Snackbar>
+          {filteredData.length === 0 ? (
+            <div className={classes.center}>
+              <SearchIcon fontSize="large" />
+              <Typography>No Matching items found</Typography>
+              <Typography variant="caption">
+                Check the filter settings
+              </Typography>
+            </div>
+          ) : (
+            <>
+              <OrderGuideTable
+                data={filteredData}
+                columns={columns}
+                mainHeader={<OrderGuideDates />}
+              />
+            </>
+          )}
         </>
       )}
     </>
-  ) : (
-    <div className={classes.center}>
-      <div>
-        <FileLoader />
-        <MockDataLink />
-      </div>
-    </div>
   );
 };
 

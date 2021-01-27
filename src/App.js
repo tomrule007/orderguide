@@ -6,6 +6,7 @@ import AppDrawer from './components/appDrawer/AppDrawer';
 import DailySalesPage from 'pages/DailySalesPage';
 import InstructionalModal from './components/instructionModal/InstructionModal';
 import LinkPage from 'pages/LinkPage';
+import MissingDataPage from 'pages/MissingDataPage';
 import OrderGuidePage from 'pages/OrderGuidePage';
 import SalesDashboardPage from 'pages/SalesDashboardPage';
 import SalesDatePickerPage from 'pages/SalesDatePickerPage';
@@ -46,6 +47,7 @@ function App() {
       <AppBar />
       <InstructionalModal />
       <Router className={classes.body}>
+        <MissingDataPage path="/missingData" />
         <Redirect from="/" to="orderguide" noThrow />
         <SalesDashboardPage path="/salesDashboard" />
         <LinkPage path="/salesDashboard/links/:salesDataId" />

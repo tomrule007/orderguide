@@ -1,32 +1,31 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import {
+  EXCEL_TYPE,
+  deleteFile,
+  getBlob,
+  selectFileStore,
+} from 'reducers/fileStoreSlice';
 import {
   Grid,
+  IconButton,
+  Link,
   List,
   ListItem,
   ListItemAvatar,
-  ListItemText,
-  Link,
   ListItemSecondaryAction,
-  IconButton,
+  ListItemText,
+  Paper,
   Tooltip,
   Typography,
-  Paper,
 } from '@material-ui/core';
-import ErrorIcon from '@material-ui/icons/Error';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import DeleteIcon from '@material-ui/icons/Delete';
-import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 import BackdropLoadingSpinner from 'components/loadingBackdrop/LoadingBackdrop';
-
-import {
-  selectFileStore,
-  deleteFile,
-  EXCEL_TYPE,
-  getBlob,
-} from 'reducers/fileStoreSlice';
+import DeleteIcon from '@material-ui/icons/Delete';
+import ErrorIcon from '@material-ui/icons/Error';
 import FileDropzone from 'components/FileDropzone/FileDropzone';
 import FileSaver from 'file-saver';
+import PictureAsPdfIcon from '@material-ui/icons/PictureAsPdf';
 
 const UploadDataPage = () => {
   // TODO: fix this loading spinner

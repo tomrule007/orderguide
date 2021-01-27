@@ -6,7 +6,6 @@ import {
 
 import appBarReducer from 'components/appBar/appBarSlice';
 import appDrawerReducer from 'components/appDrawer/appDrawerSlice';
-import fileLoaderReducer from 'components/fileLoader/fileLoaderSlice';
 import fileStoreReducer from 'reducers/fileStoreSlice';
 import filtersReducer from 'reducers/filtersSlice';
 import localForage from 'localforage';
@@ -17,7 +16,6 @@ import settingsReducer from 'reducers/settingsSlice';
 
 const rootReducer = combineReducers({
   orderGuide: orderGuideReducer,
-  fileLoader: fileLoaderReducer,
   appDrawer: appDrawerReducer,
   appBar: appBarReducer,
   filters: filtersReducer,

@@ -25,8 +25,7 @@ import ArrowBackIosIcon from '@material-ui/icons/ArrowBackIos';
 import ArrowForwardIosIcon from '@material-ui/icons/ArrowForwardIos';
 import CenterLoadingSpinner from 'components/CenterLoadingSpinner/CenterLoadingSpinner';
 import ChartCard from 'components/ChartCard/ChartCard';
-import FileLoader from 'components/fileLoader/FileLoader';
-import MockDataLink from 'components/mockDataLink/MockDataLink';
+import MissingDataPage from './MissingDataPage';
 import ReactTable from 'components/ReactTable/ReactTable';
 import { getSalesData } from 'reducers/fileStoreSlice';
 import { makeStyles } from '@material-ui/core/styles';
@@ -309,19 +308,12 @@ const SalesDashboardPage = ({ salesDataId, navigate }) => {
     };
   }, [minorCatagoriesAndTotals, store, dateString, primaryColor]);
 
+  if (!loading && !salesData) navigate('/missingData');
+
   return (
     <>
       {/* Loading */}
       {loading && <CenterLoadingSpinner />}
-
-      {/* No Data */}
-      {!loading && !salesData && (
-        <div className={classes.center}>
-          {'NO DATA'}
-          <FileLoader />
-          <MockDataLink />
-        </div>
-      )}
 
       {/* Sales Data */}
       {!loading && salesData && (

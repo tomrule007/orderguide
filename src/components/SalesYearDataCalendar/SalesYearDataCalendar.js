@@ -5,7 +5,6 @@ import Calendar from 'rc-year-calendar';
 import { Snackbar } from '@material-ui/core';
 import { compose } from 'ramda';
 import { dateToSalesId } from 'utilities/date';
-// import { navigate } from '@reach/router';
 import { salesIdToDate } from 'utilities/date';
 import { selectSalesDataFiles } from 'reducers/fileStoreSlice';
 import { useSelector } from 'react-redux';
@@ -45,6 +44,8 @@ export default function SalesYearDataCalendar({ navigate }) {
     e.events.length
       ? navigate(`${dateToSalesId(e.date)}`)
       : showNoDataAlert(e.date);
+
+  if (Object.keys(salesDataFiles).length === 0) navigate('/missingData');
 
   return (
     <>
